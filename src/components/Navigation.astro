@@ -1,16 +1,11 @@
 ---
-import clsx from 'clsx';
 const currentPath = Astro.url.pathname;
 ---
 
 <nav class="flex justify-end">
-  <ul class="flex gap-2 text-[34px]">
-    <li><a class="relative" href="/"><span class={clsx("absolute h-0.5 bg-black top-1/2 translate-y-1/2",
-    currentPath === '/' ? 'animate-growRightAnimation' : 'animate-shrinkRightAnimation'
-    )} />Index</a><span>,</span></li>
-   <li><a class="relative" href="/info"><span class={clsx("absolute h-0.5 bg-black top-1/2 translate-y-1/2",
-    currentPath === '/info' ? 'animate-growRightAnimation' : 'animate-shrinkLeftAnimation'
-    )} />Info</a></li>
+  <ul class="flex gap-2 text-lg md:text-[34px]">
+    <li><a class={currentPath === '/' ? 'line-through' : ''} href="/">Index</a><span>,</span></li>
+   <li><a class={currentPath === '/info' ? 'line-through' : ''} href="/info">Info</a></li>
   </ul>
 </nav>
 

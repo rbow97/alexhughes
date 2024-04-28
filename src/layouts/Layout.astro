@@ -2,6 +2,7 @@
 // https://docs.astro.build/en/guides/view-transitions/
 import { ViewTransitions } from 'astro:transitions';
 import Navigation from '../components/Navigation.astro';
+import ThemeIcon from '../components/ThemeIcon.astro';
 
 interface Props {
   title: string;
@@ -51,11 +52,11 @@ const { title } = Astro.props;
       <header class="flex justify-between px-[30px] pt-[30px]">
         <a
           href="/"
-          class="text-[34px]"
+          class="text-lg md:text-[34px]"
           >Alex Hughes</a
         >
-        <div class="flex gap-7 items-center">
-        <button class="h-6 w-6 rounded-full border-2 border-black" />
+        <div class="flex gap-4 md:gap-7 items-center">
+      <ThemeIcon/>
         <Navigation/>
       </div>
       </header>
@@ -197,6 +198,11 @@ const { title } = Astro.props;
     font-family: var(--font-family-sans), var(--font-family-serif), sans-serif;
     text-size-adjust: 100%;
   }
+
+  html.dark {
+  background-color: #000000;
+  color: #ffffff;
+}
 
   body {
     margin: 0;
