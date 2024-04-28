@@ -18,6 +18,26 @@ export async function getPost(slug: string): Promise<Post> {
   );
 }
 
+export async function getSettings(): Promise<Settings> {
+  return await useSanityClient().fetch(groq`*[_type == "settings"][0] {
+    menuItems[]->{
+      _type,
+      "slug": slug.current,
+      title
+    },
+  }`);
+}
+
+export interface Settings {
+  _type: "settings";
+  _createdAt: string;
+  title?: string;
+  slug: Slug;
+  excerpt?: string;
+  mainImage?: ImageAsset;
+  body: PortableTextBlock[];
+}
+
 export interface Post {
   _type: "post";
   _createdAt: string;

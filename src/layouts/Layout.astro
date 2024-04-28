@@ -1,6 +1,7 @@
 ---
 // https://docs.astro.build/en/guides/view-transitions/
 import { ViewTransitions } from 'astro:transitions';
+import Navigation from '../components/Navigation.astro';
 
 interface Props {
   title: string;
@@ -42,51 +43,34 @@ const { title } = Astro.props;
       rel="stylesheet"
     />
 
-    <title>{title}</title>Ì
+    <title>{title}</title>
     <ViewTransitions />
   </head>
   <body>
-    <div class="container">
-      <header class="header">
+    <div >
+      <header class="flex justify-between px-[30px] pt-[30px]">
         <a
-          class="header__title"
           href="/"
+          class="text-[34px]"
           >Alex Hughes</a
         >
+        <div class="flex gap-7 items-center">
+        <button class="h-6 w-6 rounded-full border-2 border-black" />
+        <Navigation/>
+      </div>
       </header>
       <main>
         <slot />
       </main>
       <footer class="footer">
-        <p class="footer__text">
-          Made with <svg
-            data-sanity-icon="heart-filled"
-            width="1em"
-            height="1em"
-            viewBox="0 0 25 25"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            ><path
-              d="M17 16C15.8 17.3235 12.5 20.5 12.5 20.5C12.5 20.5 9.2 17.3235 8 16C5.2 12.9118 4.5 11.7059 4.5 9.5C4.5 7.29412 6.1 5.5 8.5 5.5C10.5 5.5 11.7 6.82353 12.5 8.14706C13.3 6.82353 14.5 5.5 16.5 5.5C18.9 5.5 20.5 7.29412 20.5 9.5C20.5 11.7059 19.8 12.9118 17 16Z"
-              fill="currentColor"
-              stroke="currentColor"
-              stroke-width="1.2"
-            ></path></svg
-          > at Sanity
-        </p>
+        
       </footer>
     </div>
   </body>
 </html>
 
 <style>
-  .container {
-    margin: 0 auto;
-  }
 
-  main {
-    margin-top: 45px;
-  }
 
   .header {
     display: flex;

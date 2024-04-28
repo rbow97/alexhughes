@@ -2,13 +2,9 @@
 import Card from "../components/Card.astro";
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
-import { getPosts, getSettings } from "../utils/sanity";
-
-const posts = await getPosts();
-const settings = await getSettings();
 ---
 <Layout title="Alex Hughes">
   <section class="grid grid-cols-4 md:grid-cols-12 px-[30px] mt-[80px] gap-4 md:gap-6">
-    {posts.length ? posts.map((post) => <div class="col-span-2 md:col-span-3"><Card post={post} /></div>) : <Welcome />}
+  <p>hi</p>
   </section>
 </Layout>
