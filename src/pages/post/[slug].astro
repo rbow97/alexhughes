@@ -20,11 +20,11 @@ const post = await getPost(slug);
 ---
 
 <Layout title={post.title!}>
-  <section  class="grid grid-cols-4 md:grid-cols-12 px-[30px] mt-[30px] gap-4 md:gap-6">
+  <section  class="mt-auto grid grid-cols-4 md:grid-cols-12 px-4 md:px-[30px] md:mt-[30px] gap-4 md:gap-6">
     {
       post.mainImage ? (
         <img
-          class="col-span-4 md:col-span-12 mx-auto"
+          class="col-span-4 md:col-span-12 mx-auto mt-auto md:mt-unset max-h-[700px]"
           src={urlFor(post.mainImage).url()}
           alt="Cover image"
         />
@@ -33,6 +33,7 @@ const post = await getPost(slug);
       )
     }
   </section>
+  <div class="p-4 md:p-7 flex justify-between"><h2 class="text-[18px] md:text-[32px]">Travel</h2></div>
 </Layout>
 
 <style>
