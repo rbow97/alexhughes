@@ -2,10 +2,9 @@
 import Card from "../components/Card.astro";
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
-import { getPosts, getSettings } from "../utils/sanity";
+import { getPosts } from "../utils/sanity";
 
 const posts = await getPosts();
-const settings = await getSettings();
 ---
 <Layout title="Alex Hughes">
   <section class="w-full grid grid-cols-4 md:grid-cols-12 px-[30px] mt-[58px] md:mt-[80px] gap-4 md:gap-6">

@@ -1,20 +1,23 @@
 ---
 import { formatDate } from "../utils";
 import { urlFor } from "../utils/image";
-import type { Post } from "../utils/sanity";
+import { getFolder, type Post } from "../utils/sanity";
+
 
 interface Props {
   post: Post;
 }
 
 const { post } = Astro.props;
----
 
+const folder = post && await getFolder(post.folder._ref)
+
+---
 <div class="h-[164px] md:h-[320px] flex items-center justify-center mx-4">
   {
     post.mainImage ? (
       <a
-      href={`/post/${post.slug.current}`}>
+      href={`/${folder.name.toLowerCase()}`}>
       <img
       class="object-contain h-full max-h-[140px] md:max-h-[240px] hover:opacity-40 transition-opacity duration-500 ease-in-out"
         src={urlFor(post.mainImage).url()}

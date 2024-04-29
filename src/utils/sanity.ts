@@ -18,6 +18,28 @@ export async function getPost(slug: string): Promise<Post> {
   );
 }
 
+export async function getFolders(): Promise<Folder[]> {
+  return await useSanityClient().fetch(groq`*[_type == "folder"]`);
+}
+
+export async function getPostsForFolder(reference: string): Promise<Post[]> {
+  return await useSanityClient().fetch(
+    groq`*[_type == "post" && folder._ref == $reference]`,
+    {
+      reference,
+    }
+  );
+}
+
+export async function getFolder(reference: string): Promise<Folder> {
+  return await useSanityClient().fetch(
+    groq`*[_type == "folder" && _id == $reference][0]`,
+    {
+      reference,
+    }
+  );
+}
+
 export async function getSettings(): Promise<Settings> {
   return await useSanityClient().fetch(groq`*[_type == "settings"][0] {
     menuItems[]->{
@@ -46,4 +68,14 @@ export interface Post {
   excerpt?: string;
   mainImage?: ImageAsset;
   body: PortableTextBlock[];
+  tag: string;
+  folder: { _ref: string; _type: string };
+}
+
+export interface Folder {
+  _type: "folder";
+  name: string;
+  _updatedAt: string;
+  _createdAt: string;
+  _id: string;
 }

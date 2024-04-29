@@ -39,6 +39,14 @@ export default defineType({
       title: "Body",
       type: "blockContent",
     }),
+    defineField({
+      name: "folder",
+      title: "Folder",
+      type: "reference",
+      to: [{ type: "folder" }],
+      description: "Select the folder where this post belongs.",
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: {

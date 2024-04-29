@@ -1,0 +1,41 @@
+---
+import type { InferGetStaticParamsType } from 'astro/dist/@types/astro';
+import { getFolders, getPostsForFolder } from '../utils/sanity';
+import Layout from '../layouts/Layout.astro';
+import { urlFor } from '../utils/image';
+
+export async function getStaticPaths() {
+  const folders = await getFolders();
+  return folders.map((folder) => ({
+    params: { slug: folder.name.toLowerCase() },
+    props: {folderRef: folder._id, folderName: folder.name}
+  }));
+}
+
+const {folderRef, folderName} = Astro.props
+
+const posts = await getPostsForFolder(folderRef)
+
+---
+<Layout title={folderName}>
+  <section  class="flex overflow-x-hidden mt-auto px-4 md:px-[30px] md:mt-[30px] ">
+  {
+    posts.map((post) => (
+      <>
+    {
+      post.mainImage ? (
+        <img
+          class="col-span-4 md:col-span-12 mx-auto mt-auto md:mt-unset max-h-[700px]"
+          src={urlFor(post.mainImage).url()}
+          alt="Cover image"
+        />
+      ) : (
+        <div class="post__cover--none" />
+      )
+    }
+    </>
+    ))
+  }
+  </section>
+  <div class="p-4 md:p-7 flex justify-between"><h2 class="text-[18px] md:text-[32px]">{folderName}</h2></div>
+</Layout>
