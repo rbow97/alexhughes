@@ -5,7 +5,7 @@ const {
   PUBLIC_SANITY_STUDIO_PROJECT_ID,
   PUBLIC_SANITY_STUDIO_DATASET,
   PUBLIC_SANITY_PROJECT_ID,
-  PUBLIC_SANITY_DATASET
+  PUBLIC_SANITY_DATASET,
 } = loadEnv(import.meta.env.MODE, process.cwd(), "");
 import { defineConfig } from "astro/config";
 
@@ -26,13 +26,16 @@ export default defineConfig({
   // Hybrid+adapter is required to support embedded Sanity Studio
   output: "hybrid",
   adapter: vercel(),
-  integrations: [sanity({
-    projectId,
-    dataset,
-    studioBasePath: "/admin",
-    useCdn: false,
-    // `false` if you want to ensure fresh data
-    apiVersion: "2023-03-20" // Set to date of setup to use the latest API version
-  }), react() // Required for Sanity Studio
-  , tailwind()]
+  integrations: [
+    sanity({
+      projectId,
+      dataset,
+      studioBasePath: "/admin",
+      useCdn: false,
+      // `false` if you want to ensure fresh data
+      apiVersion: "2023-03-20", // Set to date of setup to use the latest API version
+    }),
+    react(), // Required for Sanity Studio
+    tailwind(),
+  ],
 });

@@ -1,0 +1,14 @@
+---
+import { Image } from "../components/pages/gallery/Image";
+import Layout from "../layouts/Layout.astro";
+import { flattenAlbums } from "../utils/flattenAlbums";
+import { getAlbums } from "../utils/sanity";
+
+const albums = await getAlbums();
+const sortedFlattenedPhotoAndAlbumTitle = flattenAlbums(albums)
+---
+<Layout title="Alex Hughes">
+  <section class="w-full grid grid-cols-4 md:grid-cols-12 px-4 md:px-[30px] mt-[58px] md:mt-[80px] gap-4 md:gap-6">
+    {sortedFlattenedPhotoAndAlbumTitle.length ? sortedFlattenedPhotoAndAlbumTitle.map((photoAndAlbumTitle) => <div class="col-span-2 md:col-span-3"><Image client:load photoAndAlbumTitle={photoAndAlbumTitle} /></div>) : <p>publish some photos</p>}
+  </section>
+</Layout>

@@ -1,6 +1,5 @@
 import blockContent from "./blockContent";
 import page from "./documents/page";
-import folder from "./folder";
-import post from "./post";
+import gallery from "./gallery";
 
-export const schemaTypes = [post, blockContent, page, folder];
+export const schemaTypes = [blockContent, page, gallery];

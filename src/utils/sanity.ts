@@ -3,41 +3,17 @@ import type { PortableTextBlock } from "@portabletext/types";
 import type { ImageAsset, Slug } from "@sanity/types";
 import groq from "groq";
 
-export async function getPosts(): Promise<Post[]> {
+export async function getAlbum(id: string): Promise<Album> {
   return await useSanityClient().fetch(
-    groq`*[_type == "post" && defined(slug.current)] | order(_createdAt desc)`
-  );
-}
-
-export async function getPost(slug: string): Promise<Post> {
-  return await useSanityClient().fetch(
-    groq`*[_type == "post" && slug.current == $slug][0]`,
+    groq`*[_type == "gallery" && _id == $id]`,
     {
-      slug,
+      id,
     }
   );
 }
 
-export async function getFolders(): Promise<Folder[]> {
-  return await useSanityClient().fetch(groq`*[_type == "folder"]`);
-}
-
-export async function getPostsForFolder(reference: string): Promise<Post[]> {
-  return await useSanityClient().fetch(
-    groq`*[_type == "post" && folder._ref == $reference]`,
-    {
-      reference,
-    }
-  );
-}
-
-export async function getFolder(reference: string): Promise<Folder> {
-  return await useSanityClient().fetch(
-    groq`*[_type == "folder" && _id == $reference][0]`,
-    {
-      reference,
-    }
-  );
+export async function getAlbums(): Promise<Album[]> {
+  return await useSanityClient().fetch(groq`*[_type == "gallery"]`);
 }
 
 export async function getSettings(): Promise<Settings> {
@@ -70,6 +46,24 @@ export interface Post {
   body: PortableTextBlock[];
   tag: string;
   folder: { _ref: string; _type: string };
+}
+
+export interface Album {
+  title: string;
+  _updatedAt: string;
+  photos: Photo[];
+  album: string;
+  _createdAt: string;
+  _rev: string;
+  _type: "gallery";
+  _id: string;
+}
+
+export interface Photo {
+  cover: boolean;
+  image: ImageAsset;
+  _key: string;
+  title: string;
 }
 
 export interface Folder {
