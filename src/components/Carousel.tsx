@@ -2,22 +2,50 @@ import { useEffect, useState } from "react";
 
 import { urlFor } from "../utils/image";
 import type { Photo } from "../utils/sanity";
-import { selectedPhoto } from "../stores/selectedPhotoStore";
 import { useStore } from "@nanostores/react";
+import { selectedPhotoRef } from "../stores/selectedPhotoRefStore";
 
 export const Carousel = ({ photos }: { photos: Photo[] }) => {
-  const $selectedPhoto = useStore(selectedPhoto);
+  const $selectedPhotoRef = useStore(selectedPhotoRef);
+
+  const currentPhoto = photos.findIndex(
+    (photo) => photo._key === $selectedPhotoRef
+  );
+
   const [centralPhotoIndex, setCentralPhotoIndex] = useState(0);
+  const [currentPhotoInAlbum, setCurrentPhotoInAlbum] = useState(0);
+  const [currentAlbumLength, setCurrentAlbumLength] = useState(
+    photos.filter(
+      (photo) => photo.albumTitle === photos[centralPhotoIndex]?.albumTitle
+    ).length
+  );
 
   useEffect(() => {
-    setCentralPhotoIndex($selectedPhoto);
+    setCentralPhotoIndex(currentPhoto);
   }, []);
+
+  useEffect(() => {
+    // Get the album title of the central photo
+    const centralPhotoAlbumTitle = photos[centralPhotoIndex]?.albumTitle;
+
+    // Find all photos with the same album title
+    const photosWithSameAlbumTitle = photos.filter(
+      (photo) => photo.albumTitle === centralPhotoAlbumTitle
+    );
+
+    // Find the position of the central photo within the subset of photos with the same album title
+    const centralPhotoIndexInAlbum = photosWithSameAlbumTitle.findIndex(
+      (photo) => photo._key === photos[centralPhotoIndex]?._key
+    );
+
+    // Set the state variable with the position of the central photo within the album
+    setCurrentPhotoInAlbum(centralPhotoIndexInAlbum + 1);
+    setCurrentAlbumLength(photosWithSameAlbumTitle.length);
+  }, [centralPhotoIndex]);
 
   const handlePhotoClick = (index: number) => {
     setCentralPhotoIndex(index);
   };
-
-  console.log($selectedPhoto);
 
   return (
     <>
@@ -56,6 +84,9 @@ export const Carousel = ({ photos }: { photos: Photo[] }) => {
         <h2 className="text-[18px] md:text-[32px]">
           {photos[centralPhotoIndex].albumTitle}
         </h2>
+        <p className="flex gap-7 md:gap-14 text-[18px] md:text-[32px]">
+          <span>{currentPhotoInAlbum}</span> <span>{currentAlbumLength}</span>
+        </p>
       </div>
     </>
   );

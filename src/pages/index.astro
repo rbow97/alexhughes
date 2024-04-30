@@ -15,6 +15,5 @@ const albumWithCoverPhoto = returnAlbumWithCoverPhoto(albums);
     {
       albumWithCoverPhoto.map((album, index) => <DisplayCurrentPhoto className={index % 2 === 0 ? ' ml-auto pl-12 md:pl-0 md:mx-auto' : 'mr-auto pr-12 md:pr-0 md:mx-auto'}  album={album} />)
     }
-    <!-- {coverPhotos.map((photo, index) => <CoverPhoto className={index % 2 === 0 ? ' ml-auto pl-12 md:pl-0 md:mx-auto' : 'mr-auto pr-12 md:pr-0 md:mx-auto'} photo={photo} />)} -->
   </section>
 </Layout>

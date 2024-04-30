@@ -1,12 +1,12 @@
 import { selectedCarouselItem } from "../../../selectedCarouselItem";
-import { selectedPhoto } from "../../../stores/selectedPhotoStore";
+import { selectedPhotoRef } from "../../../stores/selectedPhotoRefStore";
 import { urlFor } from "../../../utils/image";
 import type { Photo } from "../../../utils/sanity";
 
-export function Image({ photo, index }: { photo: Photo; index: number }) {
+export function Image({ photo }: { photo: Photo; index: number }) {
   return (
     <div
-      onClick={() => selectedPhoto.set(index)}
+      onClick={() => selectedPhotoRef.set(photo._key)}
       className="h-[164px] md:h-[320px] flex items-center justify-center mx-4"
     >
       <img

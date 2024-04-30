@@ -11,11 +11,13 @@ export function sortedPhotos(albums: Album[]) {
   // Flatten the photos array of each album and add albumName to each photo
   const flattenedPhotos = sortedAlbums.flatMap((album) => {
     const albumTitle = album.title;
+    const albumLength = album.photos.length;
     return album.photos.map((photo) => ({
       ...photo,
       albumTitle,
+      albumLength,
     }));
   });
 
-  return flattenedPhotos;
+  return flattenedPhotos.reverse();
 }

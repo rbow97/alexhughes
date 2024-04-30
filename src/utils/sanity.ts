@@ -65,13 +65,5 @@ export interface Photo {
   _key?: string;
   title: string;
   albumTitle?: string;
-  previousAlbum?: boolean;
-}
-
-export interface Folder {
-  _type: "folder";
-  name: string;
-  _updatedAt: string;
-  _createdAt: string;
-  _id: string;
+  albumLength?: number;
 }
