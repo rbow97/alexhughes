@@ -37,7 +37,6 @@ export async function getStaticPaths() {
 const {photos, albumName} = Astro.props
 
 ---
-<Layout title={albumName}>
+<Layout title='Alex Hughes'>
  <Carousel client:load photos={photos} />
-  <div class="p-4 md:p-7 flex justify-between"><h2 class="text-[18px] md:text-[32px]">{albumName}</h2></div>
 </Layout>
