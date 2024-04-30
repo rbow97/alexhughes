@@ -1,48 +1,20 @@
 ---
 import { Carousel } from '../components/Carousel';
 import Layout from '../layouts/Layout.astro';
-import { urlFor } from '../utils/image';
 import { getAlbums } from '../utils/sanity';
 
 export async function getStaticPaths() {
   const albums = await getAlbums();
-  // Sort albums by _createdAt date
-  albums.sort((a, b) => new Date(a._createdAt).getTime() - new Date(b._createdAt).getTime());
-
-  return albums.map((album, index) => {
-    // Find the index of the current album
-    if (album.title.toLowerCase() === Astro.params?.slug) {
-      const nextIndex = index + 1;
-      const nextAlbum = nextIndex < albums.length ? albums[nextIndex] : null;
-      
-      return {
-        params: { slug: album.title.toLowerCase() },
-        props: {
-          photos: album.photos,
-          albumName: album.title,
-          nextAlbumName: nextAlbum ? nextAlbum.title : null, // Pass the name of the next album
-          nextAlbumCoverPhoto: nextAlbum ? nextAlbum.photos.find(photo => photo.cover) : null // Pass the cover photo of the next album
-        }
-      };
-    }
-  }).filter(Boolean);
+  return albums.map((album) => ({
+    params: { slug: album.title.toLowerCase() },
+    props: {photos: album.photos, albumName: album.title}
+  }));
 }
 
-const { photos, albumName, nextAlbumName, nextAlbumCoverPhoto } = Astro.props;
+const {photos, albumName} = Astro.props
 
 ---
-{console.log(nextAlbumCoverPhoto, nextAlbumName)}
 <Layout title={albumName}>
-  <Carousel client:load photos={photos} />
-  <div class="p-4 md:p-7 flex justify-between">
-    <h2 class="text-[18px] md:text-[32px]">{albumName}</h2>
-    {nextAlbumName && 
-      <div>
-        <h3 class="text-[16px] md:text-[28px]">{nextAlbumName}</h3>
-        {nextAlbumCoverPhoto && 
-          <img src={urlFor(nextAlbumCoverPhoto.image).url()} alt={nextAlbumCoverPhoto.title} class="w-16 h-16 md:w-24 md:h-24" />
-        }
-      </div>
-    }
-  </div>
+ <Carousel client:load photos={photos} />
+  <div class="p-4 md:p-7 flex justify-between"><h2 class="text-[18px] md:text-[32px]">{albumName}</h2></div>
 </Layout>
