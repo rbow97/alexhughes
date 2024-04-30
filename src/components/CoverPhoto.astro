@@ -16,6 +16,7 @@ const {photo, className} = Astro.props;
 class="hover:opacity-40 max-h-[350px] md:max-h-[unset] transition-opacity duration-500 ease-in-out"
   src={urlFor(photo.coverPhoto.image).url()}
   alt="Cover image"
+  id="cover-photo"
 />
 </a>
 <div class="text-[18px] md:text-[34px] flex justify-between">
@@ -23,3 +24,12 @@ class="hover:opacity-40 max-h-[350px] md:max-h-[unset] transition-opacity durati
 <p>{photo.albumLength}</p>
 </div>
 </article>
+
+<script lang="js">
+  const img = document.getElementById('cover-photo');
+  const { photo } = Astro.props;
+  
+  img.addEventListener('mouseover', () => {
+    showAlbumPhotos(photo.album);
+  });
+</script>

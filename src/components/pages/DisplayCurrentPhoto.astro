@@ -1,0 +1,84 @@
+---
+import clsx from "clsx";
+import { urlFor } from "../../utils/image";
+import type { Album } from "../../utils/sanity";
+import type { AlbumWithCoverPhotoProps } from "../../utils/findCoverPhotos";
+
+interface Props {
+  album: AlbumWithCoverPhotoProps;
+  className?: string;
+}
+const { album, className } = Astro.props;
+---
+
+<article
+  id="current-article"
+  class={clsx(
+    "flex gap-2 md:gap-4 flex-col col-span-4 md:col-start-3 md:col-span-8 w-fit md:max-w-[870px]",
+    className
+  )}
+>
+<album-photo data-album-size={album.photos.length}>
+  <a id="container" href={`/${album.albumName.toLowerCase()}`} class="hover:opacity-40 group relative max-h-[700px] cursor-pointer">
+      <img
+        src={album.coverPhoto ? urlFor(album.coverPhoto.image).url() :  urlFor(album.photos[0].image).url()}
+        alt="Current photo"
+        id="currentPhoto"
+        class="max-h-[350px] md:max-h-[unset] group-hover:opacity-0 object-contain"
+        data-photo-urls={JSON.stringify(
+          album.photos.map((photo) => urlFor(photo.image).url())
+        )}
+      />
+      <div class="absolute inset-0 group-hover:opacity-100 -z-10 group-hover:z-10">
+          <img id="hoverPhoto" class="object-contain h-full w-full" src={album.photos.length > 1 ? urlFor(album.photos[1].image).url() : urlFor(album.photos[0].image).url()} />
+      </div>
+    </a>
+    </album-photo>
+  <div class="text-[18px] md:text-[34px] flex justify-between">
+    <a href={`/${album.albumName.toLowerCase()}`} class="cursor-pointer"
+      ><h2>{album.albumName}</h2></a
+    >
+    <p>{album.photos.length }</p>
+  </div>
+</article>
+
+
+  <script>
+
+    class AlbumPhoto extends HTMLElement {
+      constructor() {
+        super();
+
+        const albumElement: HTMLImageElement = this.querySelector("#currentPhoto")!;
+        const hoverElement: HTMLImageElement = this.querySelector("#hoverPhoto")!;
+        const container: HTMLAnchorElement = this.querySelector("#container")!;
+
+        const json = albumElement.dataset.photoUrls;
+        if (!json) return;
+
+        const photoUrls = JSON.parse(json);
+        const currentAlbumLength = photoUrls.length || 0;
+        let currentPhotoIndex = 0;
+        let timerId: any;
+
+        const showNextPhoto = () => {
+          clearInterval(timerId); // Clear any existing timer
+          timerId = setInterval(() => {
+            currentPhotoIndex = (currentPhotoIndex + 1) % currentAlbumLength;
+            const currentPhoto = photoUrls[currentPhotoIndex];
+            hoverElement.src = currentPhoto;
+          }, 75); // Change photo every 75 milliseconds
+        };
+
+        function stopShowingPhotos() {
+          clearInterval(timerId); // Stop the timer when mouse leaves the element
+        }
+
+        // Add event listeners to start and stop cycling through photos on hover
+        photoUrls.length > 1 && container.addEventListener("mouseover", showNextPhoto);
+        photoUrls.length > 1 && container.addEventListener("mouseout", stopShowingPhotos);
+      }
+    }
+
+    customElements.define("album-photo", AlbumPhoto);
+  </script>

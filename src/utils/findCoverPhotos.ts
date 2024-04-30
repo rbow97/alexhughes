@@ -1,24 +1,26 @@
 import type { Album, Photo } from "./sanity";
 
-export interface CoverPhotoProps {
-  album: string;
-  coverPhoto: Photo;
+export interface AlbumWithCoverPhotoProps {
+  albumName: string;
+  coverPhoto: Photo | null;
   albumLength: number;
+  photos: Photo[];
 }
 
-export function findCoverPhotos(albums: Album[]) {
-  const coverPhotos: CoverPhotoProps[] = [];
+export function returnAlbumWithCoverPhoto(albums: Album[]) {
+  const albumWithCoverPhoto: AlbumWithCoverPhotoProps[] = [];
 
   for (const album of albums) {
     const { album: albumName, photos } = album;
     const coverPhoto = photos.find((photo) => photo.cover);
 
-    coverPhotos.push({
-      album: albumName,
+    albumWithCoverPhoto.push({
+      albumName: albumName,
       albumLength: photos.length,
-      coverPhoto: coverPhoto || photos[0],
+      coverPhoto: coverPhoto || null,
+      photos,
     });
   }
 
-  return coverPhotos;
+  return albumWithCoverPhoto;
 }
