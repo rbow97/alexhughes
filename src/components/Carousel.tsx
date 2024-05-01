@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 
-import { urlFor } from "../utils/image";
-import type { Photo } from "../utils/sanity";
 import { useStore } from "@nanostores/react";
 import { selectedPhotoRef } from "../stores/selectedPhotoRefStore";
+import { urlFor } from "../utils/image";
+import type { FlattenedPhotosProps } from "../utils/sortedPhotos";
 
-export const Carousel = ({ photos }: { photos: Photo[] }) => {
+export const Carousel = ({ photos }: { photos: FlattenedPhotosProps[] }) => {
   const $selectedPhotoRef = useStore(selectedPhotoRef);
 
-  const currentPhoto = photos.findIndex(
-    (photo) => photo._key === $selectedPhotoRef
-  );
+  const currentPhoto = $selectedPhotoRef
+    ? photos.findIndex((photo) => photo._key === $selectedPhotoRef)
+    : 0;
 
   const [centralPhotoIndex, setCentralPhotoIndex] = useState(0);
   const [currentPhotoInAlbum, setCurrentPhotoInAlbum] = useState(0);
@@ -51,7 +51,7 @@ export const Carousel = ({ photos }: { photos: Photo[] }) => {
     <>
       <div className="grow mt-8 max-h-[700px]">
         <div className="px-16 relative overflow-hidden h-full">
-          {photos.map((photo, index) => {
+          {photos?.map((photo, index) => {
             const toRight = index > centralPhotoIndex;
             const toLeft = index < centralPhotoIndex;
             const isNext = index === centralPhotoIndex + 1;

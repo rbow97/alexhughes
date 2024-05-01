@@ -7,9 +7,8 @@ import { sortedPhotos } from '../utils/sortedPhotos';
   const albums = await getAlbums();
   
   const flattenedSortedPhotos = sortedPhotos(albums)
-
 ---
 
 <Layout title="Alex Hughes">
-  <Carousel client:load photos={flattenedSortedPhotos} />
+ <Carousel client:load photos={flattenedSortedPhotos} />
 </Layout>

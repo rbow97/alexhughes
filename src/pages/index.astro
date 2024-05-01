@@ -1,9 +1,7 @@
 ---
-import CoverPhoto from "../components/CoverPhoto.astro";
 import DisplayCurrentPhoto from "../components/pages/DisplayCurrentPhoto.astro";
 import Layout from "../layouts/Layout.astro";
 import { returnAlbumWithCoverPhoto } from "../utils/findCoverPhotos";
-import { urlFor } from "../utils/image";
 import { getAlbums } from "../utils/sanity";
 
 const albums = await getAlbums();
@@ -11,7 +9,7 @@ const albumWithCoverPhoto = returnAlbumWithCoverPhoto(albums);
 ---
 
 <Layout title="Alex Hughes">
-  <section class="w-full grid grid-cols-4 md:grid-cols-12 px-4 md:px-[30px] mt-[58px] md:mt-[80px] gap-x-4 gap-y-12 md:gap-y-64 md:gap-x-6">
+  <section class="w-full grid grid-cols-4 md:grid-cols-12 px-4 md:px-[30px] mt-[58px] md:mt-[80px] gap-x-4 gap-y-12 md:gap-y-64 md:gap-x-6 pb-12 md:pb-24">
     {
       albumWithCoverPhoto.map((album, index) => <DisplayCurrentPhoto className={index % 2 === 0 ? ' ml-auto pl-12 md:pl-0 md:mx-auto' : 'mr-auto pr-12 md:pr-0 md:mx-auto'}  album={album} />)
     }

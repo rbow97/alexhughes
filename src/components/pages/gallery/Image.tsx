@@ -1,4 +1,3 @@
-import { selectedCarouselItem } from "../../../selectedCarouselItem";
 import { selectedPhotoRef } from "../../../stores/selectedPhotoRefStore";
 import { urlFor } from "../../../utils/image";
 import type { Photo } from "../../../utils/sanity";

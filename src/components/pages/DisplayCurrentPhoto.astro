@@ -1,8 +1,8 @@
 ---
 import clsx from "clsx";
 import { urlFor } from "../../utils/image";
-import type { Album } from "../../utils/sanity";
 import type { AlbumWithCoverPhotoProps } from "../../utils/findCoverPhotos";
+import { CurrentPhoto } from "./homepage/CurrentPhoto";
 
 interface Props {
   album: AlbumWithCoverPhotoProps;
@@ -18,26 +18,24 @@ const { album, className } = Astro.props;
     className
   )}
 >
-<album-photo data-album-size={album.photos.length}>
-  <a id="container" href={`/${album.albumName.toLowerCase()}`} class="hover:opacity-40 transition-opacity ease-in-out duration-75 group relative max-h-[700px] cursor-pointer">
-      <img
-        src={album.coverPhoto ? urlFor(album.coverPhoto.image).url() :  urlFor(album.photos[0].image).url()}
-        alt="Current photo"
-        id="currentPhoto"
-        class="max-h-[350px] md:max-h-[unset] md:group-hover:opacity-0 object-contain"
-        data-photo-urls={JSON.stringify(
-          album.photos.map((photo) => urlFor(photo.image).url())
-        )}
-      />
-      <div class="hidden md:block absolute inset-0 group-hover:opacity-100 -z-10 group-hover:z-10">
-          <img id="hoverPhoto" class="object-contain h-full w-full" src={album.photos.length > 1 ? urlFor(album.photos[1].image).url() : urlFor(album.photos[0].image).url()} />
-      </div>
-    </a>
-    </album-photo>
-  <div class="text-[18px] md:text-[34px] flex justify-between">
-    <a href={`/${album.albumName.toLowerCase()}`} class="cursor-pointer"
-      ><h2>{album.albumName}</h2></a
+  <album-photo data-album-size={album.photos.length}>
+    <a
+      id="container"
+      href="/photobook"
+      class="hover:opacity-40 transition-opacity ease-in-out duration-75 group relative max-h-[700px] cursor-pointer"
     >
+    <CurrentPhoto 
+      client:load
+      imageKey={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key} imageSrc={album.coverPhoto ? urlFor(album.coverPhoto.image).url() :  urlFor(album.photos[0].image).url()}
+      hoverImageSrc={album.photos.length > 1 ? urlFor(album.photos[1].image).url() : urlFor(album.photos[0].image).url()} 
+      photoUrls={JSON.stringify(
+      album.photos.map((photo) => urlFor(photo.image).url())
+      )}
+    />
+  </a>
+  </album-photo>
+  <div class="text-[18px] md:text-[34px] flex justify-between">
+            <h2>{album.albumName}</h2>
     <p>{album.photos.length }</p>
   </div>
 </article>

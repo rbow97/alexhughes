@@ -62,8 +62,6 @@ export interface Album {
 export interface Photo {
   cover: boolean;
   image: ImageAsset;
-  _key?: string;
+  _key: string;
   title: string;
-  albumTitle?: string;
-  albumLength?: number;
 }
