@@ -6,6 +6,7 @@ const dataset =
   import.meta.env.PUBLIC_SANITY_STUDIO_DATASET! ||
   import.meta.env.PUBLIC_SANITY_DATASET!;
 
+
 // Feel free to remove this check if you don't need it
 if (!projectId || !dataset) {
   throw new Error(
