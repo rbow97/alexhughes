@@ -4,8 +4,8 @@ const currentPath = Astro.url.pathname;
 
 <nav class="flex justify-end">
   <ul class="flex gap-2 text-lg md:text-[34px]">
-    <li><a class={currentPath === '/gallery' ? 'line-through' : ''} href="/gallery">Index</a><span>,</span></li>
-   <li><a class={currentPath === '/info' ? 'line-through' : ''} href="/info">Info</a></li>
+    <li><a class={currentPath.includes('/gallery') ? 'line-through' : ''} href="/gallery">Index</a><span>,</span></li>
+   <li><a class={currentPath.includes('/info') ? 'line-through' : ''} href="/info">Info</a></li>
   </ul>
 </nav>
 

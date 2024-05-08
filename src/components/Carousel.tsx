@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 
 import { useStore } from "@nanostores/react";
+import useCarousel from "../hooks/useCarousel";
 import { selectedPhotoRef } from "../stores/selectedPhotoRefStore";
 import { urlFor } from "../utils/image";
 import type { FlattenedPhotosProps } from "../utils/sortedPhotos";
@@ -8,40 +8,13 @@ import type { FlattenedPhotosProps } from "../utils/sortedPhotos";
 export const Carousel = ({ photos }: { photos: FlattenedPhotosProps[] }) => {
   const $selectedPhotoRef = useStore(selectedPhotoRef);
 
+  
   const currentPhoto = $selectedPhotoRef
     ? photos.findIndex((photo) => photo._key === $selectedPhotoRef)
     : 0;
 
-  const [centralPhotoIndex, setCentralPhotoIndex] = useState(0);
-  const [currentPhotoInAlbum, setCurrentPhotoInAlbum] = useState(0);
-  const [currentAlbumLength, setCurrentAlbumLength] = useState(
-    photos.filter(
-      (photo) => photo.albumTitle === photos[centralPhotoIndex]?.albumTitle
-    ).length
-  );
+  const {currentPhotoInAlbum, currentAlbumLength, setCentralPhotoIndex, centralPhotoIndex} = useCarousel(photos, currentPhoto)
 
-  useEffect(() => {
-    setCentralPhotoIndex(currentPhoto);
-  }, []);
-
-  useEffect(() => {
-    // Get the album title of the central photo
-    const centralPhotoAlbumTitle = photos[centralPhotoIndex]?.albumTitle;
-
-    // Find all photos with the same album title
-    const photosWithSameAlbumTitle = photos.filter(
-      (photo) => photo.albumTitle === centralPhotoAlbumTitle
-    );
-
-    // Find the position of the central photo within the subset of photos with the same album title
-    const centralPhotoIndexInAlbum = photosWithSameAlbumTitle.findIndex(
-      (photo) => photo._key === photos[centralPhotoIndex]?._key
-    );
-
-    // Set the state variable with the position of the central photo within the album
-    setCurrentPhotoInAlbum(centralPhotoIndexInAlbum + 1);
-    setCurrentAlbumLength(photosWithSameAlbumTitle.length);
-  }, [centralPhotoIndex]);
 
   const handlePhotoClick = (index: number) => {
     setCentralPhotoIndex(index);
@@ -50,7 +23,7 @@ export const Carousel = ({ photos }: { photos: FlattenedPhotosProps[] }) => {
   return (
     <>
       <div className="grow mt-8 max-h-[700px]">
-        <div className="px-16 relative overflow-hidden h-full">
+        <div className="pl-4 md:px-16 flex md:block gap-[10px] relative overflow-x-scroll md:overflow-hidden h-full">
           {photos?.map((photo, index) => {
             const toRight = index > centralPhotoIndex;
             const toLeft = index < centralPhotoIndex;
@@ -58,18 +31,18 @@ export const Carousel = ({ photos }: { photos: FlattenedPhotosProps[] }) => {
             const isPrev = index === centralPhotoIndex - 1;
             const leftValue = toLeft ? "0%" : toRight ? "100%" : "50%";
             const transformValue = toLeft
-              ? `translateX(calc((-100% * ${
-                  isPrev ? 1 : centralPhotoIndex - index
-                }) + 30px))`
-              : toRight
-              ? `translateX(calc((100% * ${isNext ? 0 : index}) - 30px))`
-              : "translateX(-50%)";
-
+            ? `translateX(calc((-100% * ${
+              isPrev ? 1 : centralPhotoIndex - index
+            }) + 30px))`
+            : toRight
+            ? `translateX(calc((100% * ${isNext ? 0 : index}) - 30px))`
+            : "translateX(-50%)";
+            
             return (
               <img
                 key={`${photo.title}-${index}`}
                 src={urlFor(photo.image).url()}
-                className="absolute max-w-[80vw] top-0 h-full object-contain transition-all duration-500 ease-in-out cursor-pointer"
+                className="md:pl-0 md:absolute max-w-[90vw] md:max-w-[80vw] top-0 h-full object-contain transition-all duration-500 ease-in-out cursor-pointer"
                 style={{
                   left: leftValue,
                   transform: transformValue,
