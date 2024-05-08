@@ -7,7 +7,6 @@ import type { FlattenedPhotosProps } from "../utils/sortedPhotos";
 
 export const Carousel = ({ photos }: { photos: FlattenedPhotosProps[] }) => {
   const $selectedPhotoRef = useStore(selectedPhotoRef);
-
   
   const currentPhoto = $selectedPhotoRef
     ? photos.findIndex((photo) => photo._key === $selectedPhotoRef)
@@ -23,7 +22,7 @@ export const Carousel = ({ photos }: { photos: FlattenedPhotosProps[] }) => {
   return (
     <>
       <div className="grow mt-8 max-h-[700px]">
-        <div className="pl-4 md:px-16 flex md:block gap-[10px] relative overflow-x-scroll md:overflow-hidden h-full">
+        <div className="pl-4 md:px-16 block gap-[10px] relative overflow-hidden h-full">
           {photos?.map((photo, index) => {
             const toRight = index > centralPhotoIndex;
             const toLeft = index < centralPhotoIndex;
@@ -42,7 +41,7 @@ export const Carousel = ({ photos }: { photos: FlattenedPhotosProps[] }) => {
               <img
                 key={`${photo.title}-${index}`}
                 src={urlFor(photo.image).url()}
-                className="md:pl-0 md:absolute max-w-[90vw] md:max-w-[80vw] top-0 h-full object-contain transition-all duration-500 ease-in-out cursor-pointer"
+                className="pl-0 absolute max-w-[80vw] top-0 h-full object-contain transition-all duration-500 ease-in-out cursor-pointer"
                 style={{
                   left: leftValue,
                   transform: transformValue,
