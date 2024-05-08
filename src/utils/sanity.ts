@@ -1,10 +1,10 @@
-import { useSanityClient } from "@sanity/astro";
+import { sanityClient } from "sanity:client";
 import type { PortableTextBlock } from "@portabletext/types";
 import type { ImageAsset, Slug } from "@sanity/types";
 import groq from "groq";
 
 export async function getAlbum(id: string): Promise<Album> {
-  return await useSanityClient().fetch(
+  return await sanityClient.fetch(
     groq`*[_type == "gallery" && _id == $id]`,
     {
       id,
@@ -13,11 +13,11 @@ export async function getAlbum(id: string): Promise<Album> {
 }
 
 export async function getAlbums(): Promise<Album[]> {
-  return await useSanityClient().fetch(groq`*[_type == "gallery"]`);
+  return await sanityClient.fetch(groq`*[_type == "gallery"]`);
 }
 
 export async function getSettings(): Promise<Settings> {
-  return await useSanityClient().fetch(groq`*[_type == "settings"][0] {
+  return await sanityClient.fetch(groq`*[_type == "settings"][0] {
     menuItems[]->{
       _type,
       "slug": slug.current,
