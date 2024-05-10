@@ -206,11 +206,11 @@ const { photos } = Astro.props;
               slide.nextElementSibling?.classList.add('is-next');
             }
           })
+
+          const albumLength = photos.filter((photo: FlattenedPhotosProps) => photo.albumTitle === photos[0]?.albumTitle).length
+          currentAlbum.set({albumLength, centralPhotoInAlbumIndex: 1, albumName: photos[0].albumTitle})
         }
       })
-
-      const albumLength = photos.filter((photo: FlattenedPhotosProps) => photo.albumTitle === photos[0]?.albumTitle).length
-      currentAlbum.set({albumLength, centralPhotoInAlbumIndex: 1, albumName: photos[0].albumTitle})
 
       slides.forEach((slide, index) => {
         slide.addEventListener('click', (e) => this.onSlideClick(e, index));
