@@ -1,6 +1,7 @@
 ---
 import { urlFor } from '../utils/image';
 import type { FlattenedPhotosProps } from '../utils/sortedPhotos';
+import { currentAlbum } from '../stores/selectedPhotoRefStore';
 
 interface Props {
   photos: FlattenedPhotosProps[];
@@ -11,7 +12,7 @@ const { photos } = Astro.props;
 ---
 
 <image-carousel class="grow">
-  <ul class="gallery" data-photo-urls={JSON.stringify(photos)}>
+  <ul class="gallery" data-photos={JSON.stringify(photos)}>
     {
       photos.map((photo, index) => (
         <li data-id={index}>
@@ -20,6 +21,14 @@ const { photos } = Astro.props;
       ))
     }
   </ul>
+  <!-- <div class="p-4 md:p-7 flex justify-between mt-auto">
+    <h2 class="text-[18px] md:text-[32px]">
+      {photos[centralPhotoIndex].albumTitle}
+    </h2>
+    <p class="flex gap-7 md:gap-14 text-[18px] md:text-[32px]">
+      <span>{currentAlbum.albumLength}</span> <span>{album?.centralPhotoInAlbumIndex}</span>
+    </p>
+  </div> -->
 </image-carousel>
 
 <style>
@@ -33,6 +42,11 @@ const { photos } = Astro.props;
     height: fit-content;
     align-items: center;
     overflow-x: scroll;
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     /* Hide scrollbar for IE, Edge and Firefox */
     -ms-overflow-style: none;  /* IE and Edge */
@@ -52,7 +66,7 @@ const { photos } = Astro.props;
     position: relative;
 
     /* mobile */
-    max-width: 80vw;
+    max-width: calc(100vw - 30px);
     scroll-snap-align: start;
     
     @media (min-width: 767px) {
@@ -61,10 +75,10 @@ const { photos } = Astro.props;
       scroll-snap-align: center;
       padding-left: 0px;
       & img {
-        transition: all ease-in-out 500ms;
+        transition: all ease-in-out 750ms;
         object-fit: contain;
         height: 100%;
-        max-width: none;
+        max-width: 90vw;
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
@@ -82,7 +96,7 @@ const { photos } = Astro.props;
       & img {
         cursor: pointer;
         left: 0%;
-        transform: translateX(-60px);
+        transform: translateX(-30px);
       }
     }
   }
@@ -94,7 +108,7 @@ const { photos } = Astro.props;
       & img {
         cursor: pointer;
         left: 100%;
-        transform: translateX(calc(-100% + 60px));
+        transform: translateX(calc(-100% + 30px));
       }
 
     }
@@ -102,8 +116,9 @@ const { photos } = Astro.props;
 </style>
 
 <script>
-  import { selectedPhotoRef } from '../stores/selectedPhotoRefStore';
+  import { selectedPhotoRef, selectedPhotoIndex, currentAlbum } from '../stores/selectedPhotoRefStore';
   import type { Photo } from '../utils/sanity';
+import type { FlattenedPhotosProps } from '../utils/sortedPhotos';
 
   class ImageCarousel extends HTMLElement {
     constructor() {
@@ -114,18 +129,45 @@ const { photos } = Astro.props;
 
       this.onSlideClick = this.onSlideClick.bind(this);
 
-      const json = listElement.dataset.photoUrls;
+      const json = listElement.dataset.photos;
         if (!json) return;
 
-      const photoUrls = JSON.parse(json);
+      const photos: FlattenedPhotosProps[] = JSON.parse(json);
+
+      // pass index into each slide click
+      // set current index
+      // subscribe to current index
+      // set current album length based on photo index
+
+      selectedPhotoIndex.subscribe((index) => {
+          const albumLength = photos.filter(
+        (photo) => photo.albumTitle === photos[index]?.albumTitle
+      ).length
+
+        // Get the album title of the central photo
+        const centralPhotoAlbumTitle = photos[index]?.albumTitle;
+
+        // Find all photos with the same album title
+        const photosWithSameAlbumTitle = photos.filter(
+          (photo) => photo.albumTitle === centralPhotoAlbumTitle
+        );
+
+        // Find the position of the central photo within the subset of photos with the same album title
+        const centralPhotoIndexInAlbum = photosWithSameAlbumTitle.findIndex(
+          (photo) => photo._key === photos[index]?._key
+        );
+
+        currentAlbum.set({albumLength: albumLength, centralPhotoInAlbumIndex: centralPhotoIndexInAlbum + 1})
+      })
 
       // Find the index of the clicked photo from /gallery
       selectedPhotoRef.subscribe(ref => {
         if(ref) {
           const currentPhoto = ref
-          ? photoUrls.findIndex((photo: Photo) => photo._key === ref)
+          ? photos.findIndex((photo: Photo) => photo._key === ref)
           : 0;
 
+          selectedPhotoIndex.set(currentPhoto);
           
           slides.forEach((slide, index) => {
             if (index === currentPhoto) {
@@ -145,8 +187,11 @@ const { photos } = Astro.props;
         }
       })
 
-      slides.forEach((slide) => {
-        slide.addEventListener('click', this.onSlideClick);
+      const albumLength = photos.filter((photo: FlattenedPhotosProps) => photo.albumTitle === photos[0]?.albumTitle).length
+      currentAlbum.set({albumLength, centralPhotoInAlbumIndex: 1})
+
+      slides.forEach((slide, index) => {
+        slide.addEventListener('click', (e) => this.onSlideClick(e, index));
       });
     }
 
@@ -156,7 +201,10 @@ const { photos } = Astro.props;
       slides.forEach((slide) => slide.removeEventListener('click', this.onSlideClick));
     }
 
-    onSlideClick(e: Event) {
+    onSlideClick(e: Event, index?: number) {
+      // Set the current photo index
+      selectedPhotoIndex.set(index!);
+
       // reset everything to start again
       this.querySelector('.is-previous')?.classList.remove('is-previous');
       this.querySelector('.is-current')?.classList.remove('is-current');
