@@ -1,7 +1,7 @@
 ---
-import { urlFor } from '../utils/image';
-import type { FlattenedPhotosProps } from '../utils/sortedPhotos';
-import { currentAlbum } from '../stores/selectedPhotoRefStore';
+import { urlFor } from '../../../utils/image';
+import type { FlattenedPhotosProps } from '../../../utils/sortedPhotos';
+import { LabelAndPosition } from './LabelAndPosition';
 
 interface Props {
   photos: FlattenedPhotosProps[];
@@ -10,29 +10,23 @@ interface Props {
 const { photos } = Astro.props;
 
 ---
-
-<image-carousel class="grow">
-  <ul class="gallery" data-photos={JSON.stringify(photos)}>
-    {
-      photos.map((photo, index) => (
-        <li data-id={index}>
-            <img src={urlFor(photo.image).url()} />
-        </li>
-      ))
-    }
-  </ul>
-  <!-- <div class="p-4 md:p-7 flex justify-between mt-auto">
-    <h2 class="text-[18px] md:text-[32px]">
-      {photos[centralPhotoIndex].albumTitle}
-    </h2>
-    <p class="flex gap-7 md:gap-14 text-[18px] md:text-[32px]">
-      <span>{currentAlbum.albumLength}</span> <span>{album?.centralPhotoInAlbumIndex}</span>
-    </p>
-  </div> -->
-</image-carousel>
+<>
+  <image-carousel class="grow">
+    <ul class="carousel" data-photos={JSON.stringify(photos)}>
+      {
+        photos.map((photo, index) => (
+          <li data-id={index}>
+              <img src={urlFor(photo.image).url()} />
+          </li>
+        ))
+      }
+    </ul>
+  </image-carousel>
+  <LabelAndPosition client:load />
+</>
 
 <style>
-  .gallery {
+  .carousel {
     max-height: 700px;
     display: flex;
     scroll-snap-type: both mandatory;
@@ -53,6 +47,11 @@ const { photos } = Astro.props;
     scrollbar-width: none;  /* Firefox */
 
     @media (min-width: 767px) {
+
+      & > li {
+
+      }
+
       height: 100%;
       overflow-x: hidden;
     }
@@ -116,29 +115,52 @@ const { photos } = Astro.props;
 </style>
 
 <script>
-  import { selectedPhotoRef, selectedPhotoIndex, currentAlbum } from '../stores/selectedPhotoRefStore';
-  import type { Photo } from '../utils/sanity';
-import type { FlattenedPhotosProps } from '../utils/sortedPhotos';
+  import { currentAlbum, selectedPhotoIndex, selectedPhotoRef } from '../../../stores/selectedPhotoRefStore';
+  import type { Photo } from '../../../utils/sanity';
+  import type { FlattenedPhotosProps } from '../../../utils/sortedPhotos';
 
   class ImageCarousel extends HTMLElement {
     constructor() {
       super();
 
-      const slides = this.querySelectorAll<HTMLLIElement>('.gallery > li');
-      const listElement: HTMLUListElement = this.querySelector(".gallery")!;
+      const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
+      const carousel: HTMLUListElement = this.querySelector(".carousel")!;
+
+      // Needed only for mobile on scroll
+      function setIsCurrentOnScroll() {
+        
+        // Set classes when slide comes into viewport
+        slides.forEach((slide, index) => {
+          const rect = slide.getBoundingClientRect();
+          if (rect.left >= 0 && rect.right <= window.innerWidth) {
+
+            // Reset classes for all slides
+            slides.forEach(s => s.classList.remove('is-previous', 'is-current', 'is-next'));
+
+            slide.classList.add('is-current');
+            slide.nextElementSibling?.classList.add('is-next');
+            slide.previousElementSibling?.classList.add('is-previous');
+
+            selectedPhotoIndex.set(index)
+          }
+        });
+      }
+
+      // Listen for scroll event on the carousel
+      carousel.addEventListener('scroll', setIsCurrentOnScroll);
+
+      // Initially set active item
+      setIsCurrentOnScroll();  
 
       this.onSlideClick = this.onSlideClick.bind(this);
 
-      const json = listElement.dataset.photos;
+      const json = carousel.dataset.photos;
         if (!json) return;
 
       const photos: FlattenedPhotosProps[] = JSON.parse(json);
 
+      
       // pass index into each slide click
-      // set current index
-      // subscribe to current index
-      // set current album length based on photo index
-
       selectedPhotoIndex.subscribe((index) => {
           const albumLength = photos.filter(
         (photo) => photo.albumTitle === photos[index]?.albumTitle
@@ -157,7 +179,7 @@ import type { FlattenedPhotosProps } from '../utils/sortedPhotos';
           (photo) => photo._key === photos[index]?._key
         );
 
-        currentAlbum.set({albumLength: albumLength, centralPhotoInAlbumIndex: centralPhotoIndexInAlbum + 1})
+        currentAlbum.set({albumLength: albumLength, centralPhotoInAlbumIndex: centralPhotoIndexInAlbum + 1, albumName: centralPhotoAlbumTitle})
       })
 
       // Find the index of the clicked photo from /gallery
@@ -188,7 +210,7 @@ import type { FlattenedPhotosProps } from '../utils/sortedPhotos';
       })
 
       const albumLength = photos.filter((photo: FlattenedPhotosProps) => photo.albumTitle === photos[0]?.albumTitle).length
-      currentAlbum.set({albumLength, centralPhotoInAlbumIndex: 1})
+      currentAlbum.set({albumLength, centralPhotoInAlbumIndex: 1, albumName: photos[0].albumTitle})
 
       slides.forEach((slide, index) => {
         slide.addEventListener('click', (e) => this.onSlideClick(e, index));
@@ -197,7 +219,7 @@ import type { FlattenedPhotosProps } from '../utils/sortedPhotos';
 
     // clean up when element is removed
     disconnectedCallback() {
-      const slides = this.querySelectorAll<HTMLLIElement>('.gallery > li');
+      const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
       slides.forEach((slide) => slide.removeEventListener('click', this.onSlideClick));
     }
 
