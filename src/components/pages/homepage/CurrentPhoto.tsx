@@ -15,7 +15,7 @@ export function CurrentPhoto({
     <div onClick={() => selectedPhotoRef.set(imageKey)}>
       <img
         src={imageSrc}
-        alt="Current photo"
+        alt={imageKey}
         id="currentPhoto"
         className="max-h-[350px] md:max-h-[unset] md:group-hover:opacity-0 object-contain"
         data-photo-urls={photoUrls}
