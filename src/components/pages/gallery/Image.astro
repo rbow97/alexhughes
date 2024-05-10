@@ -1,0 +1,43 @@
+---
+import { urlFor } from "../../../utils/image"
+
+const { photo } = Astro.props
+---
+<gallery-photo>
+  <div id="galleryPhotoContainer" data-photo={JSON.stringify(
+    photo)} class="h-[164px] md:h-[320px] flex items-center justify-center mx-4">
+    <img
+      class="object-contain h-full max-h-[140px] md:max-h-[240px] hover:opacity-40 transition-opacity duration-500 ease-in-out"
+      src={urlFor(photo.image).url()}
+      alt={photo.title}
+  />
+  </div>
+</gallery-photo>
+
+<script>
+import { selectedPhotoRef } from "../../../stores/selectedPhotoRefStore"
+import type { Photo } from "../../../utils/sanity";
+
+
+  class GalleryPhoto extends HTMLElement {
+    constructor() {
+      super()
+      const galleryPhotoContainer: HTMLImageElement = this.querySelector("#galleryPhotoContainer")!;
+
+
+      const json = galleryPhotoContainer.dataset.photo;
+        if (!json) return;
+
+      const photo: Photo = JSON.parse(json);
+      
+      const image = this.querySelector('img')
+      
+      selectedPhotoRef.subscribe(() => {
+        image?.addEventListener('click', () => selectedPhotoRef.set(photo?._key))
+      })
+
+    }
+  }
+
+  customElements.define('gallery-photo', GalleryPhoto)
+</script>

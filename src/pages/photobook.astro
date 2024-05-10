@@ -1,5 +1,5 @@
 ---
-import { Carousel } from '../components/Carousel';
+import Carousel from '../components/Carousel.astro';
 import Layout from '../layouts/Layout.astro';
 import { getAlbums } from '../utils/sanity';
 import { sortedPhotos } from '../utils/sortedPhotos';
@@ -10,6 +10,6 @@ import { sortedPhotos } from '../utils/sortedPhotos';
 ---
 
 <Layout title="Alex Hughes">
- <Carousel client:load photos={flattenedSortedPhotos} />
- <!-- <Carousel photos={flattenedSortedPhotos} /> -->
+ <!-- <Carousel client:load photos={flattenedSortedPhotos} /> -->
+ <Carousel photos={flattenedSortedPhotos} />
 </Layout>
