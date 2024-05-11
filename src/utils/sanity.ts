@@ -1,15 +1,12 @@
-import { sanityClient } from "sanity:client";
-import type { PortableTextBlock } from "@portabletext/types";
-import type { ImageAsset, Slug } from "@sanity/types";
-import groq from "groq";
+import { sanityClient } from 'sanity:client';
+import type { PortableTextBlock } from '@portabletext/types';
+import type { ImageAsset, Slug } from '@sanity/types';
+import groq from 'groq';
 
 export async function getAlbum(id: string): Promise<Album> {
-  return await sanityClient.fetch(
-    groq`*[_type == "gallery" && _id == $id]`,
-    {
-      id,
-    }
-  );
+  return await sanityClient.fetch(groq`*[_type == "gallery" && _id == $id]`, {
+    id,
+  });
 }
 
 export async function getAlbums(): Promise<Album[]> {
@@ -27,7 +24,7 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export interface Settings {
-  _type: "settings";
+  _type: 'settings';
   _createdAt: string;
   title?: string;
   slug: Slug;
@@ -37,7 +34,7 @@ export interface Settings {
 }
 
 export interface Post {
-  _type: "post";
+  _type: 'post';
   _createdAt: string;
   title?: string;
   slug: Slug;
@@ -55,7 +52,7 @@ export interface Album {
   album: string;
   _createdAt: string;
   _rev: string;
-  _type: "gallery";
+  _type: 'gallery';
   _id: string;
 }
 

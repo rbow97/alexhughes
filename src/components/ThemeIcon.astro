@@ -1,19 +1,26 @@
 ---
+
 ---
-<button id="themeToggle" class="h-4 w-4 md:h-6 md:w-6 rounded-full border-2 theme-button" />
+
+<button id="themeToggle" class="h-4 w-4 md:h-6 md:w-6 rounded-full border-2 theme-button"
+></button>
 
 <style>
-
-#themeToggle {
+  #themeToggle {
     background: none;
   }
 
-  .theme-button { border-color: black; }
+  .theme-button {
+    border-color: black;
+  }
 
-  :global(.dark) .theme-button { border-color: white; }
-  
-  :global(.red) .theme-button { border-color: black; }
+  :global(.dark) .theme-button {
+    border-color: white;
+  }
 
+  :global(.red) .theme-button {
+    border-color: black;
+  }
 </style>
 
 <script is:inline>
@@ -27,7 +34,7 @@
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return 'dark';
     }
-      return 'light';
+    return 'light';
   })();
 
   if (theme === 'light') {
@@ -46,19 +53,18 @@
     element.classList.remove(...themeOrder);
     element.classList.add(nextTheme);
 
-    localStorage.setItem("theme", nextTheme);
-  }
+    localStorage.setItem('theme', nextTheme);
+  };
 
-  document.getElementById("themeToggle").addEventListener("click", handleToggleClick);
-  
+  document.getElementById('themeToggle').addEventListener('click', handleToggleClick);
+
   // Runs on view transitions navigation
   document.addEventListener('astro:after-swap', function () {
-      document.getElementById("themeToggle").addEventListener("click", handleToggleClick);
-        const currentTheme = localStorage.getItem("theme");
-        if (currentTheme) {
-          document.documentElement.classList.add(currentTheme);
-          currentThemeIndex = themeOrder.indexOf(currentTheme);
-        }
-    });
-
+    document.getElementById('themeToggle').addEventListener('click', handleToggleClick);
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+      document.documentElement.classList.add(currentTheme);
+      currentThemeIndex = themeOrder.indexOf(currentTheme);
+    }
+  });
 </script>

@@ -11,34 +11,17 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width"
-    />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="/favicon.svg"
-    />
-    <meta
-      name="generator"
-      content={Astro.generator}
-    />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
 
     <!-- Google fonts -->
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=Inter:wght@500;700;800&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
       rel="stylesheet"
@@ -48,103 +31,93 @@ const { title } = Astro.props;
     <ViewTransitions />
   </head>
   <body>
-      <header class="flex justify-between md:px-[30px] px-4 pt-4 md:pt-[30px]">
-        <a
-          href="/"
-          class="text-lg md:text-[34px]"
-          >Alex Hughes</a
-        >
-        <div class="flex gap-4 md:gap-7 items-center">
-      <ThemeIcon/>
-        <Navigation/>
+    <header class="flex justify-between md:px-[30px] px-4 pt-4 md:pt-[30px]">
+      <a href="/" class="text-lg md:text-[34px]">Alex Hughes</a>
+      <div class="flex gap-4 md:gap-7 items-center">
+        <ThemeIcon />
+        <Navigation />
       </div>
-      </header>
-      <main class="flex flex-col grow">
-        <slot />
-      </main>
-      <footer class="footer">
-        
-      </footer>
-  </body>
+    </header>
+    <main class="flex flex-col grow">
+      <slot />
+    </main>
+    <footer class="footer"></footer>
+  </body><style is:global>
+    :root {
+      --space-0: 0;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 20px;
+      --space-5: 32px;
+      --space-6: 52px;
+      --space-7: 84px;
+      --space-8: 136px;
+      --space-9: 220px;
+
+      --font-family-sans: Inter;
+      --font-family-serif: PT Serif;
+      --font-family-mono: IMB Plex Mono;
+
+      --font-size-0: 12px;
+      --font-size-1: 14px;
+      --font-size-2: 16px;
+      --font-size-3: 18px;
+      --font-size-4: 20px;
+      --font-size-5: 24px;
+      --font-size-6: 30px;
+      --font-size-7: 36px;
+      --font-size-8: 48px;
+      --font-size-9: 60px;
+      --font-size-10: 72px;
+
+      --line-height-0: 16px;
+      --line-height-1: 20px;
+      --line-height-2: 24px;
+      --line-height-3: 28px;
+      --line-height-4: 28px;
+      --line-height-5: 32px;
+      --line-height-6: 36px;
+      --line-height-7: 40px;
+      --line-height-8: 48px;
+      --line-height-9: 60px;
+      --line-height-10: 72px;
+      --line-height-11: 96px;
+      --line-height-12: 128px;
+
+      --white: #fff;
+      --black: #101112;
+      --gray-200: #ced2d9;
+      --gray-600: #6e7683;
+      --blue-600: #1e61cd;
+      --magenta-100: #f9d7eb;
+
+      --max-width-0: 320px;
+      --max-width-1: 768px;
+    }
+
+    html {
+      background-color: var(--white);
+      font-family: var(--font-family-sans), var(--font-family-serif), sans-serif;
+      text-size-adjust: 100%;
+      height: 100%;
+    }
+
+    html.dark {
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    html.red {
+      background-color: #ff4b13;
+      color: #000000;
+    }
+
+    body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
 </html>
-
-<style is:global>
-  :root {
-    --space-0: 0;
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 20px;
-    --space-5: 32px;
-    --space-6: 52px;
-    --space-7: 84px;
-    --space-8: 136px;
-    --space-9: 220px;
-
-    --font-family-sans: Inter;
-    --font-family-serif: PT Serif;
-    --font-family-mono: IMB Plex Mono;
-
-    --font-size-0: 12px;
-    --font-size-1: 14px;
-    --font-size-2: 16px;
-    --font-size-3: 18px;
-    --font-size-4: 20px;
-    --font-size-5: 24px;
-    --font-size-6: 30px;
-    --font-size-7: 36px;
-    --font-size-8: 48px;
-    --font-size-9: 60px;
-    --font-size-10: 72px;
-
-    --line-height-0: 16px;
-    --line-height-1: 20px;
-    --line-height-2: 24px;
-    --line-height-3: 28px;
-    --line-height-4: 28px;
-    --line-height-5: 32px;
-    --line-height-6: 36px;
-    --line-height-7: 40px;
-    --line-height-8: 48px;
-    --line-height-9: 60px;
-    --line-height-10: 72px;
-    --line-height-11: 96px;
-    --line-height-12: 128px;
-
-    --white: #fff;
-    --black: #101112;
-    --gray-200: #ced2d9;
-    --gray-600: #6e7683;
-    --blue-600: #1e61cd;
-    --magenta-100: #f9d7eb;
-
-    --max-width-0: 320px;
-    --max-width-1: 768px;
-
-  }
-  
-
-  html {
-    background-color: var(--white);
-    font-family: var(--font-family-sans), var(--font-family-serif), sans-serif;
-    text-size-adjust: 100%;
-    height: 100%;
-  }
-
-  html.dark {
-  background-color: #000000;
-  color: #ffffff;
-}
-
-  html.red {
-  background-color: #FF4B13;
-  color: #000000;
-}
-
-  body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-  }
-</style>

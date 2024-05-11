@@ -1,4 +1,4 @@
-import type { Album, Photo } from "./sanity";
+import type { Album, Photo } from './sanity';
 
 export interface FlattenedPhotosProps extends Photo {
   albumTitle?: string;
@@ -14,17 +14,15 @@ export function sortedPhotos(albums: Album[]) {
   });
 
   // Flatten the photos array of each album and add albumName to each photo
-  const flattenedPhotos: FlattenedPhotosProps[] = sortedAlbums.flatMap(
-    (album) => {
-      const albumTitle = album.title;
-      const albumLength = album.photos.length;
-      return album.photos.map((photo) => ({
-        ...photo,
-        albumTitle,
-        albumLength,
-      }));
-    }
-  );
+  const flattenedPhotos: FlattenedPhotosProps[] = sortedAlbums.flatMap((album) => {
+    const albumTitle = album.title;
+    const albumLength = album.photos.length;
+    return album.photos.map((photo) => ({
+      ...photo,
+      albumTitle,
+      albumLength,
+    }));
+  });
 
   return flattenedPhotos.reverse();
 }

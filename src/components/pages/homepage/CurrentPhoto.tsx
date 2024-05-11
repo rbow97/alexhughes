@@ -1,4 +1,4 @@
-import { selectedPhotoRef } from "../../../stores/selectedPhotoRefStore";
+import { selectedPhotoRef } from '../../../stores/selectedPhotoRefStore';
 
 export function CurrentPhoto({
   imageSrc,
@@ -17,13 +17,13 @@ export function CurrentPhoto({
         src={imageSrc}
         alt={imageKey}
         id="currentPhoto"
-        className="max-h-[350px] md:max-h-[unset] md:group-hover:opacity-0 object-contain"
+        className="max-h-[350px] object-contain md:max-h-[unset] md:group-hover:opacity-0"
         data-photo-urls={photoUrls}
       />
-      <div className="hidden md:block absolute inset-0 group-hover:opacity-100 -z-10 group-hover:z-10">
+      <div className="absolute inset-0 -z-10 hidden group-hover:z-10 group-hover:opacity-100 md:block">
         <img
           id="hoverPhoto"
-          className="object-contain h-full w-full"
+          className="h-full w-full object-contain"
           src={hoverImageSrc}
         />
       </div>

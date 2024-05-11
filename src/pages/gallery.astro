@@ -1,14 +1,27 @@
 ---
-import Image from "../components/pages/gallery/Image.astro";
-import Layout from "../layouts/Layout.astro";
-import { getAlbums } from "../utils/sanity";
-import { sortedPhotos } from "../utils/sortedPhotos";
+import Image from '../components/pages/gallery/Image.astro';
+import Layout from '../layouts/Layout.astro';
+import { getAlbums } from '../utils/sanity';
+import { sortedPhotos } from '../utils/sortedPhotos';
 
 const albums = await getAlbums();
 const photos = sortedPhotos(albums);
 ---
+
 <Layout title="Alex Hughes">
-  <section class="w-full grid grid-cols-4 md:grid-cols-12 px-4 md:px-[30px] mt-[58px] md:mt-[80px] gap-4 md:gap-6">
-    {photos.length ? photos.map((photo, index) => <a href='/photobook' class="col-span-2 md:col-span-3"><Image photo={photo} index={index} /></a>) : <p>publish some photos</p>}
+  <section
+    class="w-full grid grid-cols-4 md:grid-cols-12 px-4 md:px-[30px] mt-[58px] md:mt-[80px] gap-4 md:gap-6"
+  >
+    {
+      photos.length ? (
+        photos.map((photo, index) => (
+          <a href="/photobook" class="col-span-2 md:col-span-3">
+            <Image photo={photo} index={index} />
+          </a>
+        ))
+      ) : (
+        <p>publish some photos</p>
+      )
+    }
   </section>
 </Layout>

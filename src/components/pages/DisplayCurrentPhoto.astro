@@ -1,8 +1,8 @@
 ---
-import clsx from "clsx";
-import { urlFor } from "../../utils/image";
-import type { AlbumWithCoverPhotoProps } from "../../utils/findCoverPhotos";
-import { CurrentPhoto } from "./homepage/CurrentPhoto";
+import clsx from 'clsx';
+import { urlFor } from '../../utils/image';
+import type { AlbumWithCoverPhotoProps } from '../../utils/findCoverPhotos';
+import { CurrentPhoto } from './homepage/CurrentPhoto';
 
 interface Props {
   album: AlbumWithCoverPhotoProps;
@@ -14,8 +14,8 @@ const { album, className } = Astro.props;
 <article
   id="current-article"
   class={clsx(
-    "flex gap-2 md:gap-4 flex-col col-span-4 md:col-start-3 md:col-span-8 w-fit md:max-w-[870px]",
-    className
+    'flex gap-2 md:gap-4 flex-col col-span-4 md:col-start-3 md:col-span-8 w-fit md:max-w-[870px]',
+    className,
   )}
 >
   <album-photo data-album-size={album.photos.length}>
@@ -24,58 +24,60 @@ const { album, className } = Astro.props;
       href="/photobook"
       class="hover:opacity-40 transition-opacity ease-in-out duration-75 group relative max-h-[700px] cursor-pointer"
     >
-    <CurrentPhoto 
-      client:load
-      imageKey={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key} imageSrc={album.coverPhoto ? urlFor(album.coverPhoto.image).url() :  urlFor(album.photos[0].image).url()}
-      hoverImageSrc={album.photos.length > 1 ? urlFor(album.photos[1].image).url() : urlFor(album.photos[0].image).url()} 
-      photoUrls={JSON.stringify(
-      album.photos.map((photo) => urlFor(photo.image).url())
-      )}
-    />
-  </a>
+      <CurrentPhoto
+        client:load
+        imageKey={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key}
+        imageSrc={album.coverPhoto
+          ? urlFor(album.coverPhoto.image).url()
+          : urlFor(album.photos[0].image).url()}
+        hoverImageSrc={album.photos.length > 1
+          ? urlFor(album.photos[1].image).url()
+          : urlFor(album.photos[0].image).url()}
+        photoUrls={JSON.stringify(album.photos.map((photo) => urlFor(photo.image).url()))}
+      />
+    </a>
   </album-photo>
   <div class="text-[18px] md:text-[34px] flex justify-between">
-            <h2>{album.albumName}</h2>
-    <p>{album.photos.length }</p>
+    <h2>{album.albumName}</h2>
+    <p>{album.photos.length}</p>
   </div>
 </article>
 
+<script>
+  class AlbumPhoto extends HTMLElement {
+    constructor() {
+      super();
 
-  <script>
-    class AlbumPhoto extends HTMLElement {
-      constructor() {
-        super();
+      const albumElement: HTMLImageElement = this.querySelector('#currentPhoto')!;
+      const hoverElement: HTMLImageElement = this.querySelector('#hoverPhoto')!;
+      const container: HTMLAnchorElement = this.querySelector('#container')!;
 
-        const albumElement: HTMLImageElement = this.querySelector("#currentPhoto")!;
-        const hoverElement: HTMLImageElement = this.querySelector("#hoverPhoto")!;
-        const container: HTMLAnchorElement = this.querySelector("#container")!;
+      const json = albumElement.dataset.photoUrls;
+      if (!json) return;
 
-        const json = albumElement.dataset.photoUrls;
-        if (!json) return;
+      const photoUrls = JSON.parse(json);
+      const currentAlbumLength = photoUrls.length || 0;
+      let currentPhotoIndex = 0;
+      let timerId: any;
 
-        const photoUrls = JSON.parse(json);
-        const currentAlbumLength = photoUrls.length || 0;
-        let currentPhotoIndex = 0;
-        let timerId: any;
+      const showNextPhoto = () => {
+        clearInterval(timerId); // Clear any existing timer
+        timerId = setInterval(() => {
+          currentPhotoIndex = (currentPhotoIndex + 1) % currentAlbumLength;
+          const currentPhoto = photoUrls[currentPhotoIndex];
+          hoverElement.src = currentPhoto;
+        }, 100); // Change photo every 100 milliseconds
+      };
 
-        const showNextPhoto = () => {
-          clearInterval(timerId); // Clear any existing timer
-          timerId = setInterval(() => {
-            currentPhotoIndex = (currentPhotoIndex + 1) % currentAlbumLength;
-            const currentPhoto = photoUrls[currentPhotoIndex];
-            hoverElement.src = currentPhoto;
-          }, 100); // Change photo every 100 milliseconds
-        };
-
-        function stopShowingPhotos() {
-          clearInterval(timerId); // Stop the timer when mouse leaves the element
-        }
-
-        // Add event listeners to start and stop cycling through photos on hover
-        photoUrls.length > 1 && container.addEventListener("mouseover", showNextPhoto);
-        photoUrls.length > 1 && container.addEventListener("mouseout", stopShowingPhotos);
+      function stopShowingPhotos() {
+        clearInterval(timerId); // Stop the timer when mouse leaves the element
       }
-    }
 
-    customElements.define("album-photo", AlbumPhoto);
-  </script>
+      // Add event listeners to start and stop cycling through photos on hover
+      photoUrls.length > 1 && container.addEventListener('mouseover', showNextPhoto);
+      photoUrls.length > 1 && container.addEventListener('mouseout', stopShowingPhotos);
+    }
+  }
+
+  customElements.define('album-photo', AlbumPhoto);
+</script>

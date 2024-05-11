@@ -1,14 +1,11 @@
-import type { Album } from "./sanity";
+import type { Album } from './sanity';
 
 // Fix this so it sorts photos not just albums
 
 export function flattenAlbums(albums: Album[]) {
   // Sort the albums by _createdAt
   albums.sort((albumA, albumB) => {
-    return (
-      new Date(albumA._createdAt).valueOf() -
-      new Date(albumB._createdAt).valueOf()
-    );
+    return new Date(albumA._createdAt).valueOf() - new Date(albumB._createdAt).valueOf();
   });
 
   // Create an array of objects containing photo and album title

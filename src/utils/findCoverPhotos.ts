@@ -1,4 +1,4 @@
-import type { Album, Photo } from "./sanity";
+import type { Album, Photo } from './sanity';
 
 export interface AlbumWithCoverPhotoProps {
   albumName: string;

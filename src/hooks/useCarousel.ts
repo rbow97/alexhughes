@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
-import type { FlattenedPhotosProps } from "../utils/sortedPhotos";
+import { useEffect, useState } from 'react';
+import type { FlattenedPhotosProps } from '../utils/sortedPhotos';
 
-export default function useCarousel(photos: FlattenedPhotosProps[], currentPhoto: number) {
+export default function useCarousel(
+  photos: FlattenedPhotosProps[],
+  currentPhoto: number,
+) {
   const [centralPhotoIndex, setCentralPhotoIndex] = useState(0);
   const [currentPhotoInAlbum, setCurrentPhotoInAlbum] = useState(0);
   const [currentAlbumLength, setCurrentAlbumLength] = useState(
-    photos.filter(
-      (photo) => photo.albumTitle === photos[centralPhotoIndex]?.albumTitle
-    ).length
+    photos.filter((photo) => photo.albumTitle === photos[centralPhotoIndex]?.albumTitle)
+      .length,
   );
 
   useEffect(() => {
@@ -20,12 +22,12 @@ export default function useCarousel(photos: FlattenedPhotosProps[], currentPhoto
 
     // Find all photos with the same album title
     const photosWithSameAlbumTitle = photos.filter(
-      (photo) => photo.albumTitle === centralPhotoAlbumTitle
+      (photo) => photo.albumTitle === centralPhotoAlbumTitle,
     );
 
     // Find the position of the central photo within the subset of photos with the same album title
     const centralPhotoIndexInAlbum = photosWithSameAlbumTitle.findIndex(
-      (photo) => photo._key === photos[centralPhotoIndex]?._key
+      (photo) => photo._key === photos[centralPhotoIndex]?._key,
     );
 
     // Set the state variable with the position of the central photo within the album
@@ -37,6 +39,6 @@ export default function useCarousel(photos: FlattenedPhotosProps[], currentPhoto
     centralPhotoIndex,
     currentPhotoInAlbum,
     currentAlbumLength,
-    setCentralPhotoIndex
-  }
+    setCentralPhotoIndex,
+  };
 }
