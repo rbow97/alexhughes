@@ -27,7 +27,7 @@ const { photos } = Astro.props;
 
 <style>
   .carousel {
-    max-height: 700px;
+    max-height: 600px;
     display: flex;
     scroll-snap-type: both mandatory;
 
@@ -46,10 +46,8 @@ const { photos } = Astro.props;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 
-    @media (min-width: 767px) {
-      & > li {
-      }
-
+    @media (min-width: 961px) {
+      max-height: 700px;
       height: 100%;
       overflow-x: hidden;
     }
@@ -65,7 +63,7 @@ const { photos } = Astro.props;
     max-width: calc(100vw - 30px);
     scroll-snap-align: start;
 
-    @media (min-width: 767px) {
+    @media (min-width: 961px) {
       max-width: unset;
       width: 100vw;
       scroll-snap-align: center;
@@ -85,7 +83,7 @@ const { photos } = Astro.props;
   .is-next {
     z-index: 1;
 
-    @media (min-width: 767px) {
+    @media (min-width: 961px) {
       & img {
         cursor: pointer;
         left: 0%;
@@ -97,7 +95,7 @@ const { photos } = Astro.props;
   .is-previous {
     z-index: 1;
 
-    @media (min-width: 767px) {
+    @media (min-width: 961px) {
       & img {
         cursor: pointer;
         left: 100%;

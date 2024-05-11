@@ -1,11 +1,19 @@
 ---
+import { PortableText } from 'astro-portabletext';
 import Layout from '../layouts/Layout.astro';
----
+import { getPagesBySlugQuery } from '../utils/sanity';
 
+const page = await getPagesBySlugQuery('info')
+---
 <Layout title="Alex Hughes">
   <section
-    class="grid grid-cols-4 md:grid-cols-12 px-[30px] mt-[58px] md:mt-[80px] gap-4 md:gap-6"
+    class="grid grid-cols-4 md:grid-cols-12 px-4 md:px-[30px] mt-[30px] md:mt-[80px] gap-4 md:gap-6"
   >
-    <p>hi</p>
+  <div class="col-span-4 md:col-span-8 col-start-1 text-lg md:text-[34px] leading-[20px] md:leading-[40px]">
+    <p class="md:hidden mb-[24px]">
+      Is a designer based on Malvern, England
+    </p>
+    <PortableText class='portable-text' value={page.body} />
+  </div>
   </section>
 </Layout>

@@ -23,6 +23,20 @@ export async function getSettings(): Promise<Settings> {
   }`);
 }
 
+export async function getPagesBySlugQuery(slug: string) {
+  return await sanityClient.fetch(groq`
+    *[_type == "page" && slug.current == $slug][0] {
+      _id,
+      body,
+      overview,
+      title,
+      "slug": slug.current,
+    }`, {
+      slug
+    }
+  )
+}
+
 export interface Settings {
   _type: 'settings';
   _createdAt: string;

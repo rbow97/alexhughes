@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -32,7 +33,7 @@ const { title } = Astro.props;
   </head>
   <body>
     <header class="flex justify-between md:px-[30px] px-4 pt-4 md:pt-[30px]">
-      <a href="/" class="text-lg md:text-[34px]">Alex Hughes</a>
+      <a href="/" class={currentPath.includes('info') ? "name text-lg md:text-[34px] leading-[20px] md:leading-[40px]" : 'text-lg md:text-[34px] leading-[20px] md:leading-[40px]'}>Alex Hughes</a>
       <div class="flex gap-4 md:gap-7 items-center">
         <ThemeIcon />
         <Navigation />
@@ -100,16 +101,28 @@ const { title } = Astro.props;
         font-family: var(--font-family-sans), var(--font-family-serif), sans-serif;
         text-size-adjust: 100%;
         height: 100%;
+
+        .portable-text a {
+          color: #00000066
+        }
       }
 
       html.dark {
         background-color: #000000;
         color: #ffffff;
+
+        .portable-text a {
+          color: #ffffff80
+        }
       }
 
       html.red {
         background-color: #ff4b13;
         color: #000000;
+
+        .portable-text a {
+          color: #00000066
+        }
       }
 
       body {
@@ -117,6 +130,16 @@ const { title } = Astro.props;
         margin: 0;
         display: flex;
         flex-direction: column;
+      }
+
+      .name {
+        line-height: 40px;
+
+        @media (min-width: 961px) {
+          &::after {
+            content: ' is a designer based in Malvern, England.'
+          }
+        }
       }
     </style>
   </body>
