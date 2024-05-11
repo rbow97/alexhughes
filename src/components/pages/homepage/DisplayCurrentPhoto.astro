@@ -1,8 +1,7 @@
 ---
 import clsx from 'clsx';
-import { urlFor } from '../../utils/image';
-import type { AlbumWithCoverPhotoProps } from '../../utils/findCoverPhotos';
-import { CurrentPhoto } from './homepage/CurrentPhoto';
+import { urlFor } from '../../../utils/image';
+import type { AlbumWithCoverPhotoProps } from '../../../utils/findCoverPhotos';
 
 interface Props {
   album: AlbumWithCoverPhotoProps;
@@ -24,17 +23,27 @@ const { album, className } = Astro.props;
       href="/photobook"
       class="hover:opacity-40 transition-opacity ease-in-out duration-75 group relative max-h-[700px] cursor-pointer"
     >
-      <CurrentPhoto
-        client:load
-        imageKey={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key}
-        imageSrc={album.coverPhoto
+    <div>
+      <img
+        src={album.coverPhoto
           ? urlFor(album.coverPhoto.image).url()
           : urlFor(album.photos[0].image).url()}
-        hoverImageSrc={album.photos.length > 1
-          ? urlFor(album.photos[1].image).url()
-          : urlFor(album.photos[0].image).url()}
-        photoUrls={JSON.stringify(album.photos.map((photo) => urlFor(photo.image).url()))}
+        alt={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key}
+        id="currentPhoto"
+        class="max-h-[350px] object-contain md:max-h-[unset] md:group-hover:opacity-0"
+        data-photo-urls={JSON.stringify(album.photos.map((photo) => urlFor(photo.image).url()))}
       />
+      <div class="absolute inset-0 -z-10 hidden group-hover:z-10 group-hover:opacity-100 md:block">
+        <img
+          data-image-key={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key}
+          id="hoverPhoto"
+          class="h-full w-full object-contain"
+          src={album.photos.length > 1
+            ? urlFor(album.photos[1].image).url()
+            : urlFor(album.photos[0].image).url()}
+        />
+      </div>
+    </div>
     </a>
   </album-photo>
   <div class="text-[18px] md:text-[34px] flex justify-between">
@@ -44,6 +53,8 @@ const { album, className } = Astro.props;
 </article>
 
 <script>
+  import { selectedPhotoRef } from "../../../stores/selectedPhotoRefStore";
+
   class AlbumPhoto extends HTMLElement {
     constructor() {
       super();
@@ -54,6 +65,8 @@ const { album, className } = Astro.props;
 
       const json = albumElement.dataset.photoUrls;
       if (!json) return;
+
+      const imageKey = hoverElement.dataset.imageKey;
 
       const photoUrls = JSON.parse(json);
       const currentAlbumLength = photoUrls.length || 0;
@@ -72,6 +85,8 @@ const { album, className } = Astro.props;
       function stopShowingPhotos() {
         clearInterval(timerId); // Stop the timer when mouse leaves the element
       }
+
+      container.addEventListener('click', () => selectedPhotoRef.set(imageKey))
 
       // Add event listeners to start and stop cycling through photos on hover
       photoUrls.length > 1 && container.addEventListener('mouseover', showNextPhoto);
