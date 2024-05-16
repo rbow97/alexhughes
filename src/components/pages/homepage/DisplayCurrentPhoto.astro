@@ -21,7 +21,7 @@ const { album, className } = Astro.props;
     <a
       id="container"
       href="/photobook"
-      class="hover:opacity-40 transition-opacity ease-in-out duration-75 group relative max-h-[700px] cursor-pointer"
+      class="group relative max-h-[700px] cursor-pointer"
     >
     <div>
       <img
@@ -79,7 +79,7 @@ const { album, className } = Astro.props;
           currentPhotoIndex = (currentPhotoIndex + 1) % currentAlbumLength;
           const currentPhoto = photoUrls[currentPhotoIndex];
           hoverElement.src = currentPhoto;
-        }, 100); // Change photo every 100 milliseconds
+        }, 150); // Change photo every 100 milliseconds
       };
 
       function stopShowingPhotos() {

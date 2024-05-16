@@ -27,7 +27,6 @@ const { photos } = Astro.props;
 
 <style>
   .carousel {
-    max-height: 600px;
     display: flex;
     scroll-snap-type: both mandatory;
 
@@ -63,7 +62,7 @@ const { photos } = Astro.props;
     max-width: calc(100vw - 30px);
     scroll-snap-align: start;
 
-    @media (min-width: 961px) {
+    @media (min-width: 960px) {
       max-width: unset;
       width: 100vw;
       scroll-snap-align: center;
@@ -83,7 +82,8 @@ const { photos } = Astro.props;
   .is-next {
     z-index: 1;
 
-    @media (min-width: 961px) {
+    @media (min-width: 960px) {
+      z-index: -1;
       & img {
         cursor: pointer;
         left: 0%;
@@ -95,7 +95,8 @@ const { photos } = Astro.props;
   .is-previous {
     z-index: 1;
 
-    @media (min-width: 961px) {
+    @media (min-width: 960px) {
+      z-index: -1;
       & img {
         cursor: pointer;
         left: 100%;
@@ -103,6 +104,15 @@ const { photos } = Astro.props;
       }
     }
   }
+
+  .cursor-right {
+    cursor: url("/images/right-arrow.svg") 30 26, pointer;
+  }
+
+  .cursor-left {
+    cursor: url("/images/left-arrow.svg") 30 26, pointer;
+  }
+
 </style>
 
 <script>
@@ -141,11 +151,22 @@ const { photos } = Astro.props;
         });
       }
 
-      // Listen for scroll event on the carousel
-      carousel.addEventListener('scroll', setIsCurrentOnScroll);
+      if (window.innerWidth < 960) {
+        setIsCurrentOnScroll();
+        // Listen for scroll event on the carousel
+        carousel.addEventListener('scroll', setIsCurrentOnScroll);
+      } else {
+        carousel?.addEventListener('mousemove', (e) => {
 
-      // Initially set active item
-      setIsCurrentOnScroll();
+        if ((e.pageX/carousel.offsetWidth)*100 > 50) {
+          carousel.classList.add('cursor-right')
+        } else carousel.classList.remove('cursor-right')
+
+        if ((e.pageX/carousel.offsetWidth)*100 <= 50) {
+          carousel.classList.add('cursor-left')
+        } else carousel.classList.remove('cursor-left')
+        })
+      }
 
       this.onSlideClick = this.onSlideClick.bind(this);
 
@@ -221,27 +242,66 @@ const { photos } = Astro.props;
       });
     }
 
+      // reset everything to start again
+      resetCallback() {
+      this.querySelector('.is-previous')?.classList.remove('is-previous');
+      this.querySelector('.is-current')?.classList.remove('is-current');
+      this.querySelector('.is-next')?.classList.remove('is-next');
+    }
+
     // clean up when element is removed
     disconnectedCallback() {
       const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
       slides.forEach((slide) => slide.removeEventListener('click', this.onSlideClick));
     }
 
-    onSlideClick(e: Event, index?: number) {
-      // Set the current photo index
-      selectedPhotoIndex.set(index!);
-
-      // reset everything to start again
-      this.querySelector('.is-previous')?.classList.remove('is-previous');
-      this.querySelector('.is-current')?.classList.remove('is-current');
-      this.querySelector('.is-next')?.classList.remove('is-next');
-
-      // add the latest correct classes
+    onSlideClick(e: MouseEvent, index?: number) {
+      const carousel: HTMLUListElement = this.querySelector('.carousel')!;
+      const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
       const currentSlide = e.currentTarget as HTMLLIElement;
-      currentSlide.classList.add('is-current');
-      currentSlide.nextElementSibling?.classList.add('is-next');
-      currentSlide.previousElementSibling?.classList.add('is-previous');
-      currentSlide.scrollIntoView({ behavior: 'smooth' });
+
+      
+      if (window.innerWidth > 959) {
+        if ((e.pageX/carousel.offsetWidth)*100 > 50) {
+
+            if (index === slides.length - 1) return null;
+
+            this.resetCallback();
+
+
+            selectedPhotoIndex.set(index! + 1)
+
+            currentSlide.classList.add('is-previous');
+            currentSlide.nextElementSibling?.classList.add('is-current');
+            currentSlide.nextElementSibling?.nextElementSibling?.classList.add('is-next');
+            this.querySelector('.is-current')?.scrollIntoView({behavior: 'smooth'});
+
+        } else {
+            if (index === 0) return null;
+
+            this.resetCallback();
+
+            selectedPhotoIndex.set(index! - 1)
+
+            currentSlide.classList.add('is-next');
+            currentSlide.previousElementSibling?.classList.add('is-current');
+            currentSlide.previousElementSibling?.previousElementSibling?.classList.add('is-previous');
+            this.querySelector('.is-current')?.scrollIntoView({behavior: 'smooth'});
+        }
+
+      } else {
+        this.resetCallback();
+
+        // Set the current photo index
+        selectedPhotoIndex.set(index!);
+
+        // add the latest correct classes
+        currentSlide.classList.add('is-current');
+        currentSlide.nextElementSibling?.classList.add('is-next');
+        currentSlide.previousElementSibling?.classList.add('is-previous');
+        currentSlide.scrollIntoView({ behavior: 'smooth' });
+      }
+
     }
   }
 
