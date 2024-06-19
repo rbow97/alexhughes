@@ -1,7 +1,6 @@
 ---
 import { urlFor } from '../../../utils/image';
 import type { FlattenedPhotosProps } from '../../../utils/sortedPhotos';
-import { LabelAndPosition } from './LabelAndPosition';
 
 interface Props {
   photos: FlattenedPhotosProps[];
@@ -22,7 +21,6 @@ const { photos } = Astro.props;
       }
     </ul>
   </image-carousel>
-  <LabelAndPosition client:load />
 </>
 
 <style>
@@ -49,6 +47,7 @@ const { photos } = Astro.props;
       max-height: 700px;
       height: 100%;
       overflow-x: hidden;
+      margin-top: 0px;
     }
   }
 
@@ -105,14 +104,31 @@ const { photos } = Astro.props;
     }
   }
 
-  .cursor-right {
-    cursor: url("/images/right-arrow.svg") 30 26, pointer;
+  .cursor-right,
+  :global(.red) .cursor-right {
+    cursor:
+      url('/images/right-arrow.svg') 30 26,
+      pointer;
   }
 
-  .cursor-left {
-    cursor: url("/images/left-arrow.svg") 30 26, pointer;
+  :global(.dark) .cursor-right {
+    cursor:
+      url('/images/right-arrow-white.svg') 30 26,
+      pointer;
   }
 
+  .cursor-left,
+  :global(.red) .cursor-left {
+    cursor:
+      url('/images/left-arrow.svg') 30 26,
+      pointer;
+  }
+
+  :global(.dark) .cursor-left {
+    cursor:
+      url('/images/left-arrow-white.svg') 30 26,
+      pointer;
+  }
 </style>
 
 <script>
@@ -157,15 +173,14 @@ const { photos } = Astro.props;
         carousel.addEventListener('scroll', setIsCurrentOnScroll);
       } else {
         carousel?.addEventListener('mousemove', (e) => {
+          if ((e.pageX / carousel.offsetWidth) * 100 > 50) {
+            carousel.classList.add('cursor-right');
+          } else carousel.classList.remove('cursor-right');
 
-        if ((e.pageX/carousel.offsetWidth)*100 > 50) {
-          carousel.classList.add('cursor-right')
-        } else carousel.classList.remove('cursor-right')
-
-        if ((e.pageX/carousel.offsetWidth)*100 <= 50) {
-          carousel.classList.add('cursor-left')
-        } else carousel.classList.remove('cursor-left')
-        })
+          if ((e.pageX / carousel.offsetWidth) * 100 <= 50) {
+            carousel.classList.add('cursor-left');
+          } else carousel.classList.remove('cursor-left');
+        });
       }
 
       this.onSlideClick = this.onSlideClick.bind(this);
@@ -242,8 +257,8 @@ const { photos } = Astro.props;
       });
     }
 
-      // reset everything to start again
-      resetCallback() {
+    // reset everything to start again
+    resetCallback() {
       this.querySelector('.is-previous')?.classList.remove('is-previous');
       this.querySelector('.is-current')?.classList.remove('is-current');
       this.querySelector('.is-next')?.classList.remove('is-next');
@@ -260,35 +275,32 @@ const { photos } = Astro.props;
       const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
       const currentSlide = e.currentTarget as HTMLLIElement;
 
-      
       if (window.innerWidth > 959) {
-        if ((e.pageX/carousel.offsetWidth)*100 > 50) {
+        if ((e.pageX / carousel.offsetWidth) * 100 > 50) {
+          if (index === slides.length - 1) return null;
 
-            if (index === slides.length - 1) return null;
+          this.resetCallback();
 
-            this.resetCallback();
+          selectedPhotoIndex.set(index! + 1);
 
-
-            selectedPhotoIndex.set(index! + 1)
-
-            currentSlide.classList.add('is-previous');
-            currentSlide.nextElementSibling?.classList.add('is-current');
-            currentSlide.nextElementSibling?.nextElementSibling?.classList.add('is-next');
-            this.querySelector('.is-current')?.scrollIntoView({behavior: 'smooth'});
-
+          currentSlide.classList.add('is-previous');
+          currentSlide.nextElementSibling?.classList.add('is-current');
+          currentSlide.nextElementSibling?.nextElementSibling?.classList.add('is-next');
+          this.querySelector('.is-current')?.scrollIntoView({ behavior: 'smooth' });
         } else {
-            if (index === 0) return null;
+          if (index === 0) return null;
 
-            this.resetCallback();
+          this.resetCallback();
 
-            selectedPhotoIndex.set(index! - 1)
+          selectedPhotoIndex.set(index! - 1);
 
-            currentSlide.classList.add('is-next');
-            currentSlide.previousElementSibling?.classList.add('is-current');
-            currentSlide.previousElementSibling?.previousElementSibling?.classList.add('is-previous');
-            this.querySelector('.is-current')?.scrollIntoView({behavior: 'smooth'});
+          currentSlide.classList.add('is-next');
+          currentSlide.previousElementSibling?.classList.add('is-current');
+          currentSlide.previousElementSibling?.previousElementSibling?.classList.add(
+            'is-previous',
+          );
+          this.querySelector('.is-current')?.scrollIntoView({ behavior: 'smooth' });
         }
-
       } else {
         this.resetCallback();
 
@@ -301,7 +313,6 @@ const { photos } = Astro.props;
         currentSlide.previousElementSibling?.classList.add('is-previous');
         currentSlide.scrollIntoView({ behavior: 'smooth' });
       }
-
     }
   }
 

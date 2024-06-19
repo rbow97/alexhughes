@@ -1,6 +1,9 @@
 ---
+import Navigation from '../components/Navigation.astro';
+import ThemeIcon from '../components/ThemeIcon.astro';
 import Carousel from '../components/pages/photobook/Carousel.astro';
-import Layout from '../layouts/Layout.astro';
+import { LabelAndPosition } from '../components/pages/photobook/LabelAndPosition';
+import EmptyLayout from '../layouts/EmptyLayout.astro';
 import { getAlbums } from '../utils/sanity';
 import { sortedPhotos } from '../utils/sortedPhotos';
 
@@ -9,6 +12,38 @@ const albums = await getAlbums();
 const flattenedSortedPhotos = sortedPhotos(albums);
 ---
 
-<Layout title="Alex Hughes">
-  <Carousel photos={flattenedSortedPhotos} />
-</Layout>
+<EmptyLayout title="Alex Hughes">
+  <body>
+    <header class="md:px-[30px] px-4 py-4 md:py-[30px]">
+      <a href="/" class="text-lg md:text-[34px] leading-[20px] md:leading-[40px]" }
+        >Alex Hughes</a
+      >
+      <div class="flex gap-4 md:gap-7 items-center">
+        <ThemeIcon />
+        <Navigation />
+      </div>
+    </header>
+    <main>
+      <Carousel photos={flattenedSortedPhotos} />
+      <LabelAndPosition client:load />
+    </main>
+  </body>
+</EmptyLayout>
+<style>
+  body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
