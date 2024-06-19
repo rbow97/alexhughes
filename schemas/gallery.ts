@@ -23,17 +23,11 @@ export default defineType({
       type: 'array',
       name: 'photos',
       title: 'Photos',
-      description: 'Upload photos with titles',
+      description: 'Upload photos',
       of: [
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({
-              type: 'string',
-              name: 'title',
-              title: 'Title',
-              validation: (rule) => rule.required(),
-            }),
             defineField({
               type: 'image',
               icon: ImageIcon,
