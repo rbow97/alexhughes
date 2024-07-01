@@ -8,7 +8,7 @@ export function LabelAndPosition() {
     <div className="mt-auto flex justify-between p-4 md:p-7">
       <h2 className="text-[18px] md:text-[32px]">{$currentAlbum.albumName}</h2>
       <p className="flex gap-7 text-[18px] md:gap-14 md:text-[32px]">
-        <span>{$currentAlbum.centralPhotoInAlbumIndex}</span>{' '}
+        <span>{$currentAlbum.centralPhotoInAlbumIndex}</span>
         <span>{$currentAlbum.albumLength}</span>
       </p>
     </div>

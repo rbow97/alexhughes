@@ -4,6 +4,10 @@ import Layout from '../layouts/Layout.astro';
 import { getAlbums } from '../utils/sanity';
 import { sortedPhotos } from '../utils/sortedPhotos';
 
+export function getStaticPaths() {
+  return [{ params: { path: 'index' } }];
+}
+
 const albums = await getAlbums();
 const photos = sortedPhotos(albums);
 ---

@@ -1,0 +1,366 @@
+---
+import { urlFor } from '../../../utils/image';
+import type { FlattenedPhotosProps } from '../../../utils/sortedPhotos';
+
+interface Props {
+  photos: FlattenedPhotosProps[];
+}
+
+const { photos } = Astro.props;
+---
+
+<>
+  <image-carousel class="grow">
+    <ul class="carousel" data-photos={JSON.stringify(photos)}>
+      {
+        photos.map((photo, index) => (
+          <li data-id={index}>
+            <img src={urlFor(photo.image).url()} />
+          </li>
+        ))
+      }
+    </ul>
+  </image-carousel>
+</>
+
+<style>
+  .carousel {
+    display: flex;
+    scroll-snap-type: both mandatory;
+
+    /* mobile */
+    margin-top: 32px;
+    height: fit-content;
+    align-items: center;
+    overflow-x: scroll;
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    @media (min-width: 961px) {
+      max-height: 700px;
+      height: 100%;
+      overflow-x: hidden;
+      margin-top: 0px;
+    }
+  }
+
+  li {
+    height: 100%;
+    flex-shrink: 0;
+    padding-left: 10px;
+    position: relative;
+    scroll-snap-align: start;
+
+    /* mobile */
+    max-width: calc(100vw - 30px);
+    /* scroll-snap-align: start; */
+
+    @media (min-width: 960px) {
+      max-width: unset;
+      width: 100vw;
+      /* scroll-snap-align: center; */
+      padding-left: 0px;
+      & img {
+        transition: all ease-in-out 750ms;
+        object-fit: contain;
+        height: 100%;
+        max-width: 90vw;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+  }
+
+  li:last-of-type {
+    padding-right: 10px;
+  }
+
+  .is-next,
+  .is-previous {
+    z-index: 1;
+  }
+
+  .cursor-right,
+  :global(.red) .cursor-right {
+    cursor:
+      url('/images/right-arrow.svg') 30 26,
+      pointer;
+  }
+
+  :global(.dark) .cursor-right {
+    cursor:
+      url('/images/right-arrow-white.svg') 30 26,
+      pointer;
+  }
+
+  .cursor-left,
+  :global(.red) .cursor-left {
+    cursor:
+      url('/images/left-arrow.svg') 30 26,
+      pointer;
+  }
+
+  :global(.dark) .cursor-left {
+    cursor:
+      url('/images/left-arrow-white.svg') 30 26,
+      pointer;
+  }
+
+  @media (min-width: 960px) {
+    li:last-of-type {
+      padding-right: 0px;
+    }
+    .is-next {
+      z-index: -1;
+      & img {
+        cursor: pointer;
+        left: 0%;
+        transform: translateX(-30px);
+      }
+    }
+
+    .is-previous {
+      z-index: -1;
+      & img {
+        cursor: pointer;
+        left: 100%;
+        transform: translateX(calc(-100% + 30px));
+      }
+    }
+  }
+</style>
+
+<script>
+  import {
+    currentAlbum,
+    selectedPhotoIndex,
+    selectedPhotoRef,
+  } from '../../../stores/selectedPhotoRefStore';
+  import type { Photo } from '../../../utils/sanity';
+  import type { FlattenedPhotosProps } from '../../../utils/sortedPhotos';
+
+  class ImageCarousel extends HTMLElement {
+    constructor() {
+      super();
+
+      console.log(selectedPhotoRef);
+
+      const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
+      const carousel: HTMLUListElement = this.querySelector('.carousel')!;
+      const isMobileScreen = window.innerWidth < 960;
+
+      if (isMobileScreen) {
+        setCurrentImageOnScroll(slides);
+        // Listen for scroll event on the carousel
+        carousel.addEventListener('scroll', () => setCurrentImageOnScroll(slides));
+      } else {
+        addCursorIconsForChosenImage(carousel);
+      }
+
+      this.onSlideClick = this.onSlideClick.bind(this);
+
+      const json = carousel.dataset.photos;
+      if (!json) return;
+
+      const photos: FlattenedPhotosProps[] = JSON.parse(json);
+
+      selectedPhotoIndex.subscribe((index) => setCurrentPhotoInformation(photos, index));
+
+      selectedPhotoRef.subscribe((ref) =>
+        assignCurrentPhotoBasedOnSelectedImage(ref, photos, slides),
+      );
+
+      slides.forEach((slide, index) => {
+        slide.addEventListener('click', (e) => this.onSlideClick(e, index));
+      });
+    }
+
+    // reset everything to start again
+    resetCallback() {
+      this.querySelector('.is-previous')?.classList.remove('is-previous');
+      this.querySelector('.is-current')?.classList.remove('is-current');
+      this.querySelector('.is-next')?.classList.remove('is-next');
+    }
+
+    // clean up when element is removed
+    disconnectedCallback() {
+      const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
+      slides.forEach((slide) => slide.removeEventListener('click', this.onSlideClick));
+    }
+
+    onSlideClick(e: MouseEvent, index?: number) {
+      const carousel: HTMLUListElement = this.querySelector('.carousel')!;
+      const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
+      const currentSlide = e.currentTarget as HTMLLIElement;
+
+      if (isDesktopScreen) {
+        if (eventIsOnRightHalfOfScreen(e, carousel)) {
+          if (index === slides.length - 1) return null;
+
+          this.resetCallback();
+
+          setNextImageOnClick(currentSlide, index);
+          this.querySelector('.is-current')?.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          if (index === 0) return null;
+
+          this.resetCallback();
+
+          setPreviousImageOnClick(currentSlide, index);
+          this.querySelector('.is-current')?.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        this.resetCallback();
+
+        // Set the current photo index
+        selectedPhotoIndex.set(index!);
+
+        // add the latest correct classes
+        setCurrentNextAndPreviousSlides(currentSlide);
+        currentSlide.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }
+
+  customElements.define('image-carousel', ImageCarousel);
+
+  const isDesktopScreen = window.innerWidth > 959;
+
+  function setCurrentNextAndPreviousSlides(slide: HTMLLIElement) {
+    slide.classList.add('is-current');
+    slide.nextElementSibling?.classList.add('is-next');
+    slide.previousElementSibling?.classList.add('is-previous');
+  }
+
+  function slideIsSomewhereInTheMiddle(slide: HTMLLIElement) {
+    const rect = slide.getBoundingClientRect();
+    return rect.left >= 0 && rect.right <= window.innerWidth;
+  }
+
+  function resetClassesForAllSlides(slides: NodeListOf<HTMLLIElement>) {
+    slides.forEach((s) => s.classList.remove('is-previous', 'is-current', 'is-next'));
+  }
+
+  // Needed only for mobile on scroll
+  function setCurrentImageOnScroll(slides: NodeListOf<HTMLLIElement>) {
+    // Set classes when slide comes into viewport
+    slides.forEach((slide, index) => {
+      if (slideIsSomewhereInTheMiddle(slide)) {
+        resetClassesForAllSlides(slides);
+        setCurrentNextAndPreviousSlides(slide);
+
+        selectedPhotoIndex.set(index);
+      }
+    });
+  }
+
+  function eventIsOnRightHalfOfScreen(e: MouseEvent, carousel: HTMLUListElement) {
+    return (e.pageX / carousel.offsetWidth) * 100 > 50;
+  }
+
+  function addCursorIconsForChosenImage(carousel: HTMLUListElement) {
+    carousel?.addEventListener('mousemove', (e) => {
+      if (eventIsOnRightHalfOfScreen(e, carousel)) {
+        carousel.classList.remove('cursor-left');
+        carousel.classList.add('cursor-right');
+      } else {
+        carousel.classList.add('cursor-left');
+        carousel.classList.remove('cursor-right');
+      }
+    });
+  }
+
+  function setCurrentPhotoInformation(photos: FlattenedPhotosProps[], index: number) {
+    const currentAlbumLength = photos.filter(
+      (photo) => photo.albumTitle === photos[index]?.albumTitle,
+    ).length;
+    const currentPhotoAlbumTitle = photos[index]?.albumTitle;
+    const photosWithSameAlbumTitle = photos.filter(
+      (photo) => photo.albumTitle === currentPhotoAlbumTitle,
+    );
+    const centralPhotoIndexInCurrentAlbum = photosWithSameAlbumTitle.findIndex(
+      (photo) => photo._key === photos[index]?._key,
+    );
+
+    currentAlbum.set({
+      albumLength: currentAlbumLength,
+      centralPhotoInAlbumIndex: centralPhotoIndexInCurrentAlbum + 1,
+      albumName: currentPhotoAlbumTitle,
+    });
+  }
+
+  function setNextImageOnClick(currentSlide: HTMLLIElement, index?: number) {
+    selectedPhotoIndex.set(index! + 1);
+
+    currentSlide.classList.add('is-previous');
+    currentSlide.nextElementSibling?.classList.add('is-current');
+    currentSlide.nextElementSibling?.nextElementSibling?.classList.add('is-next');
+  }
+
+  function setPreviousImageOnClick(currentSlide: HTMLLIElement, index?: number) {
+    selectedPhotoIndex.set(index! - 1);
+
+    currentSlide.classList.add('is-next');
+    currentSlide.previousElementSibling?.classList.add('is-current');
+    currentSlide.previousElementSibling?.previousElementSibling?.classList.add(
+      'is-previous',
+    );
+  }
+
+  function assignCurrentPhotoBasedOnSelectedImage(
+    ref: string | undefined,
+    photos: FlattenedPhotosProps[],
+    slides: NodeListOf<HTMLLIElement>,
+  ) {
+    if (ref) {
+      showClickedImage(ref, slides, photos);
+    } else {
+      defaultToFirstImage(slides, photos);
+    }
+  }
+
+  function showClickedImage(
+    ref: string,
+    slides: NodeListOf<HTMLLIElement>,
+    photos: FlattenedPhotosProps[],
+  ) {
+    const currentPhoto = ref ? photos.findIndex((photo: Photo) => photo._key === ref) : 0;
+
+    selectedPhotoIndex.set(currentPhoto);
+
+    slides.forEach((slide, index) => {
+      if (index === currentPhoto) {
+        slide.scrollIntoView();
+        setCurrentNextAndPreviousSlides(slide);
+      }
+    });
+  }
+
+  function defaultToFirstImage(
+    slides: NodeListOf<HTMLLIElement>,
+    photos: FlattenedPhotosProps[],
+  ) {
+    slides.forEach((slide, index) => {
+      if (index === 0) {
+        slide.classList.add('is-current');
+        slide.nextElementSibling?.classList.add('is-next');
+      }
+    });
+    const albumLength = photos.filter(
+      (photo: FlattenedPhotosProps) => photo.albumTitle === photos[0]?.albumTitle,
+    ).length;
+    currentAlbum.set({
+      albumLength,
+      centralPhotoInAlbumIndex: 1,
+      albumName: photos[0].albumTitle,
+    });
+  }
+</script>

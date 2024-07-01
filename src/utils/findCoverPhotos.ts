@@ -18,7 +18,7 @@ export function returnAlbumWithCoverPhoto(albums: Album[]) {
       albumName: albumName,
       albumLength: photos.length,
       coverPhoto: coverPhoto || null,
-      photos,
+      photos: photos.reverse(),
     });
   }
 

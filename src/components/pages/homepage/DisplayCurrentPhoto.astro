@@ -18,32 +18,32 @@ const { album, className } = Astro.props;
   )}
 >
   <album-photo data-album-size={album.photos.length}>
-    <a
-      id="container"
-      href="/photobook"
-      class="group relative max-h-[700px] cursor-pointer"
-    >
-    <div>
-      <img
-        src={album.coverPhoto
-          ? urlFor(album.coverPhoto.image).url()
-          : urlFor(album.photos[0].image).url()}
-        alt={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key}
-        id="currentPhoto"
-        class="max-h-[350px] object-contain md:max-h-[unset] md:group-hover:opacity-0"
-        data-photo-urls={JSON.stringify(album.photos.map((photo) => urlFor(photo.image).url()))}
-      />
-      <div class="absolute inset-0 -z-10 hidden group-hover:z-10 group-hover:opacity-100 md:block">
+    <a id="container" href="/project" class="group relative max-h-[700px] cursor-pointer">
+      <div>
         <img
-          data-image-key={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key}
-          id="hoverPhoto"
-          class="h-full w-full object-contain"
-          src={album.photos.length > 1
-            ? urlFor(album.photos[1].image).url()
+          src={album.coverPhoto
+            ? urlFor(album.coverPhoto.image).url()
             : urlFor(album.photos[0].image).url()}
+          alt={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key}
+          id="currentPhoto"
+          class="max-h-[350px] object-contain md:max-h-[unset] md:group-hover:opacity-0"
+          data-photo-urls={JSON.stringify(
+            album.photos.map((photo) => urlFor(photo.image).url()),
+          )}
         />
+        <div
+          class="absolute inset-0 -z-10 hidden group-hover:z-10 group-hover:opacity-100 md:block"
+        >
+          <img
+            data-image-key={album.photos[0]._key}
+            id="hoverPhoto"
+            class="h-full w-full object-contain"
+            src={album.photos.length > 1
+              ? urlFor(album.photos[1].image).url()
+              : urlFor(album.photos[0].image).url()}
+          />
+        </div>
       </div>
-    </div>
     </a>
   </album-photo>
   <div class="text-[18px] md:text-[34px] flex justify-between">
@@ -53,7 +53,7 @@ const { album, className } = Astro.props;
 </article>
 
 <script>
-  import { selectedPhotoRef } from "../../../stores/selectedPhotoRefStore";
+  import { selectedPhotoRef } from '../../../stores/selectedPhotoRefStore';
 
   class AlbumPhoto extends HTMLElement {
     constructor() {
@@ -67,6 +67,8 @@ const { album, className } = Astro.props;
       if (!json) return;
 
       const imageKey = hoverElement.dataset.imageKey;
+
+      console.log(imageKey);
 
       const photoUrls = JSON.parse(json);
       const currentAlbumLength = photoUrls.length || 0;
@@ -86,7 +88,7 @@ const { album, className } = Astro.props;
         clearInterval(timerId); // Stop the timer when mouse leaves the element
       }
 
-      container.addEventListener('click', () => selectedPhotoRef.set(imageKey))
+      container.addEventListener('click', () => selectedPhotoRef.set(imageKey));
 
       // Add event listeners to start and stop cycling through photos on hover
       photoUrls.length > 1 && container.addEventListener('mouseover', showNextPhoto);
