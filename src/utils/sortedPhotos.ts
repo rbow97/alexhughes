@@ -1,4 +1,5 @@
 import type { Album, Photo } from './sanity';
+import { sortAlbumsByDateCreated } from './sortAlbumsByDateCreated';
 
 export interface FlattenedPhotosProps extends Photo {
   albumTitle?: string;
@@ -6,12 +7,7 @@ export interface FlattenedPhotosProps extends Photo {
 }
 
 export function sortedPhotos(albums: Album[]) {
-  // Sort the albums by _createdAt date in ascending order
-  const sortedAlbums = albums.sort((albumA, albumB) => {
-    const dateA = new Date(albumA._createdAt).getTime();
-    const dateB = new Date(albumB._createdAt).getTime();
-    return dateA - dateB;
-  });
+  const sortedAlbums = sortAlbumsByDateCreated(albums);
 
   // Flatten the photos array of each album and add albumName to each photo
   const flattenedPhotos: FlattenedPhotosProps[] = sortedAlbums.flatMap((album) => {

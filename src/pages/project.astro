@@ -13,8 +13,8 @@ const flattenedSortedPhotos = sortedPhotos(albums);
 ---
 
 <EmptyLayout title="Alex Hughes">
-  <body>
-    <header class="md:px-[30px] px-4 py-4 md:py-[30px]">
+  <body class="h-full flex flex-col">
+    <header class="flex justify-between md:px-[30px] px-4 py-4 md:py-[30px]">
       <a href="/" class="text-lg md:text-[34px] leading-[20px] md:leading-[40px]" }
         >Alex Hughes</a
       >
@@ -23,7 +23,7 @@ const flattenedSortedPhotos = sortedPhotos(albums);
         <Navigation />
       </div>
     </header>
-    <main>
+    <main class="flex flex-col grow">
       <Carousel photos={flattenedSortedPhotos} />
       <LabelAndPosition client:load />
     </main>
@@ -34,16 +34,5 @@ const flattenedSortedPhotos = sortedPhotos(albums);
     height: 100%;
     display: flex;
     flex-direction: column;
-  }
-
-  main {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  header {
-    display: flex;
-    justify-content: space-between;
   }
 </style>

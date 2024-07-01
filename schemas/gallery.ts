@@ -1,11 +1,11 @@
-import { DocumentIcon, ImageIcon } from '@sanity/icons';
+import { BookIcon, ImageIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 export default defineType({
   type: 'document',
   name: 'gallery',
   title: 'Gallery',
-  icon: DocumentIcon,
+  icon: BookIcon,
   fields: [
     defineField({
       type: 'string',
@@ -44,6 +44,12 @@ export default defineType({
               description: 'Select this photo as the cover photo for the album',
             }),
           ],
+          preview: {
+            select: {
+              imageUrl: 'image.asset.url',
+              title: 'image.asset.originalFilename',
+            },
+          },
         }),
       ],
     }),

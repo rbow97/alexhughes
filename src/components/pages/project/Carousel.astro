@@ -1,4 +1,5 @@
 ---
+import clsx from 'clsx';
 import { urlFor } from '../../../utils/image';
 import type { FlattenedPhotosProps } from '../../../utils/sortedPhotos';
 
@@ -11,11 +12,40 @@ const { photos } = Astro.props;
 
 <>
   <image-carousel class="grow">
-    <ul class="carousel" data-photos={JSON.stringify(photos)}>
+    <ul
+      class={clsx(
+        'carousel',
+        'flex snap-both snap-mandatory h-full',
+
+        // mobile
+        'items-center overflow-x-scroll',
+
+        // desktop
+        'overflow-x-hidden',
+      )}
+      data-photos={JSON.stringify(photos)}
+    >
       {
         photos.map((photo, index) => (
-          <li data-id={index}>
-            <img src={urlFor(photo.image).url()} />
+          <li
+            class={clsx(
+              // mobile
+              'h-full flex items-center shrink-0 pl-2.5 relative snap-start max-w-[calc(100vw_-_30px)] max-h-[calc(100vh_-_120px)] last-of-type:pr-2.5',
+
+              // desktop
+              'md:max-w-[unset] md:w-screen md:pl-0 md:last-of-type:pr-0',
+            )}
+            data-id={index}
+          >
+            <img
+              class={clsx(
+                'max-h-full',
+
+                // desktop
+                'md:object-contain md:h-full md:max-w-[90vw] md:absolute md:left-1/2 md:transition-all md:ease-in-out md:duration-[750ms] md:-translate-x-1/2',
+              )}
+              src={urlFor(photo.image).url()}
+            />
           </li>
         ))
       }
@@ -25,15 +55,6 @@ const { photos } = Astro.props;
 
 <style>
   .carousel {
-    display: flex;
-    scroll-snap-type: both mandatory;
-
-    /* mobile */
-    margin-top: 32px;
-    height: fit-content;
-    align-items: center;
-    overflow-x: scroll;
-
     /* Hide scrollbar for Chrome, Safari and Opera */
     &::-webkit-scrollbar {
       display: none;
@@ -42,45 +63,6 @@ const { photos } = Astro.props;
     /* Hide scrollbar for IE, Edge and Firefox */
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
-
-    @media (min-width: 961px) {
-      max-height: 700px;
-      height: 100%;
-      overflow-x: hidden;
-      margin-top: 0px;
-    }
-  }
-
-  li {
-    height: 100%;
-    flex-shrink: 0;
-    padding-left: 10px;
-    position: relative;
-    scroll-snap-align: start;
-
-    /* mobile */
-    max-width: calc(100vw - 30px);
-    /* scroll-snap-align: start; */
-
-    @media (min-width: 960px) {
-      max-width: unset;
-      width: 100vw;
-      /* scroll-snap-align: center; */
-      padding-left: 0px;
-      & img {
-        transition: all ease-in-out 750ms;
-        object-fit: contain;
-        height: 100%;
-        max-width: 90vw;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-    }
-  }
-
-  li:last-of-type {
-    padding-right: 10px;
   }
 
   .is-next,
@@ -115,9 +97,6 @@ const { photos } = Astro.props;
   }
 
   @media (min-width: 960px) {
-    li:last-of-type {
-      padding-right: 0px;
-    }
     .is-next {
       z-index: -1;
       & img {

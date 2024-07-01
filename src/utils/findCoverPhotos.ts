@@ -1,4 +1,5 @@
 import type { Album, Photo } from './sanity';
+import { sortAlbumsByDateCreated } from './sortAlbumsByDateCreated';
 
 export interface AlbumWithCoverPhotoProps {
   albumName: string;
@@ -9,8 +10,9 @@ export interface AlbumWithCoverPhotoProps {
 
 export function returnAlbumWithCoverPhoto(albums: Album[]) {
   const albumWithCoverPhoto: AlbumWithCoverPhotoProps[] = [];
+  const sortedAlbums = sortAlbumsByDateCreated(albums);
 
-  for (const album of albums) {
+  for (const album of sortedAlbums) {
     const { album: albumName, photos } = album;
     const coverPhoto = photos.find((photo) => photo.cover);
 
