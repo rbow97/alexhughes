@@ -5,17 +5,13 @@ const { photo } = Astro.props;
 ---
 
 <gallery-photo>
-  <div
-    id="galleryPhotoContainer"
+  <img
+    id="galleryPhoto"
     data-photo={JSON.stringify(photo)}
-    class="h-[164px] md:h-[320px] flex items-center justify-center mx-4"
-  >
-    <img
-      class="object-contain h-full max-h-[140px] md:max-h-[240px] hover:opacity-40 transition-opacity duration-200 ease-in-out"
-      src={urlFor(photo.image).url()}
-      alt={photo.title}
-    />
-  </div>
+    class="object-contain max-h-[240px] hover:opacity-40 transition-opacity duration-200 ease-in-out"
+    src={urlFor(photo.image).url()}
+    alt={photo.title}
+  />
 </gallery-photo>
 
 <script>
@@ -25,11 +21,9 @@ const { photo } = Astro.props;
   class GalleryPhoto extends HTMLElement {
     constructor() {
       super();
-      const galleryPhotoContainer: HTMLImageElement = this.querySelector(
-        '#galleryPhotoContainer',
-      )!;
+      const galleryPhoto: HTMLImageElement = this.querySelector('#galleryPhoto')!;
 
-      const json = galleryPhotoContainer.dataset.photo;
+      const json = galleryPhoto.dataset.photo;
       if (!json) return;
 
       const photo: Photo = JSON.parse(json);
