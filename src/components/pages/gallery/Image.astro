@@ -8,7 +8,7 @@ const { photo } = Astro.props;
   <img
     id="galleryPhoto"
     data-photo={JSON.stringify(photo)}
-    class="object-contain max-h-[240px] hover:opacity-40 transition-opacity duration-200 ease-in-out"
+    class="object-contain max-h-[140px] md:max-h-[240px] hover:opacity-40 transition-opacity duration-200 ease-in-out"
     src={urlFor(photo.image).url()}
     alt={photo.title}
   />
