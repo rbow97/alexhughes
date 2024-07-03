@@ -68,8 +68,6 @@ const { album, className } = Astro.props;
 
       const imageKey = hoverElement.dataset.imageKey;
 
-      console.log(imageKey);
-
       const photoUrls = JSON.parse(json);
       const currentAlbumLength = photoUrls.length || 0;
       let currentPhotoIndex = 0;

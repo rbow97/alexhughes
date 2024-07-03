@@ -13,6 +13,10 @@ export async function getAlbums(): Promise<Album[]> {
   return await sanityClient.fetch(groq`*[_type == "gallery"]`);
 }
 
+export async function getColourTheme(): Promise<ColourTheme[]> {
+  return await sanityClient.fetch(groq`*[_type == "colourTheme"]`);
+}
+
 export async function getSettings(): Promise<Settings> {
   return await sanityClient.fetch(groq`*[_type == "settings"][0] {
     menuItems[]->{
@@ -24,17 +28,19 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export async function getPagesBySlugQuery(slug: string) {
-  return await sanityClient.fetch(groq`
+  return await sanityClient.fetch(
+    groq`
     *[_type == "page" && slug.current == $slug][0] {
       _id,
       body,
       overview,
       title,
       "slug": slug.current,
-    }`, {
-      slug
-    }
-  )
+    }`,
+    {
+      slug,
+    },
+  );
 }
 
 export interface Settings {
@@ -68,6 +74,17 @@ export interface Album {
   _rev: string;
   _type: 'gallery';
   _id: string;
+}
+
+export interface ColourTheme {
+  background: string;
+  textColour: string;
+  _createdAt: string;
+  _rev: string;
+  _type: 'colourTheme';
+  name: string;
+  _id: string;
+  _updatedAt: string;
 }
 
 export interface Photo {

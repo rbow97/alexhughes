@@ -130,8 +130,6 @@ const { photos } = Astro.props;
     constructor() {
       super();
 
-      console.log(selectedPhotoRef);
-
       const slides = this.querySelectorAll<HTMLLIElement>('.carousel > li');
       const carousel: HTMLUListElement = this.querySelector('.carousel')!;
       const isMobileScreen = window.innerWidth < 960;

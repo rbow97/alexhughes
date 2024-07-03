@@ -1,9 +1,15 @@
 ---
+import { getColourTheme } from '../utils/sanity';
 
+const colours = await getColourTheme();
 ---
 
-<button id="themeToggle" class="h-4 w-4 md:h-6 md:w-6 rounded-full border-2 theme-button"
-></button>
+<button-container class="h-6">
+  <button
+    data-colours={JSON.stringify(colours)}
+    id="themeToggle"
+    class="h-4 w-4 md:h-6 md:w-6 rounded-full border-2 theme-button"></button>
+</button-container>
 
 <style>
   #themeToggle {
@@ -17,54 +23,102 @@
   :global(.dark) .theme-button {
     border-color: white;
   }
-
-  :global(.red) .theme-button {
-    border-color: black;
-  }
 </style>
 
-<script is:inline>
-  const themeOrder = ['light', 'dark', 'red'];
-  let currentThemeIndex = 0;
+<script>
+  import type { ColourTheme } from '../utils/sanity';
 
-  const theme = (() => {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-      return localStorage.getItem('theme');
-    }
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    return 'light';
-  })();
+  class ButtonContainer extends HTMLElement {
+    constructor() {
+      super();
 
-  if (theme === 'light') {
-    document.documentElement.classList.remove('dark', 'red');
-  } else {
-    document.documentElement.classList.add(theme);
+      const buttonElement: HTMLButtonElement = this.querySelector('#themeToggle')!;
+
+      const coloursJson = buttonElement.dataset.colours;
+      if (!coloursJson) return;
+
+      const colours: ColourTheme[] = JSON.parse(coloursJson);
+
+      const themeOrder = [
+        'light',
+        'dark',
+        ...colours.map((theme) => theme.name.toLowerCase()),
+      ];
+
+      if (localStorage.getItem('theme') === null) {
+        localStorage.setItem('theme', 'light');
+      }
+
+      let currentThemeIndex = themeOrder.indexOf(localStorage.getItem('theme')!) || 0;
+
+      const theme: string = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme')!;
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+
+      const setTheme = (theme: string) => {
+        const element = document.documentElement;
+        element.classList.remove(...themeOrder);
+        if (theme !== 'light') {
+          element.classList.add(theme);
+        }
+        localStorage.setItem('theme', theme);
+      };
+
+      setTheme(theme);
+
+      const handleToggleClick = () => {
+        currentThemeIndex = (currentThemeIndex + 1) % themeOrder.length;
+        const nextTheme = themeOrder[currentThemeIndex];
+        setTheme(nextTheme);
+      };
+
+      document
+        .getElementById('themeToggle')!
+        .addEventListener('click', handleToggleClick);
+
+      // Runs on view transitions navigation
+      document.addEventListener('astro:after-swap', function () {
+        document
+          .getElementById('themeToggle')!
+          .addEventListener('click', handleToggleClick);
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+          document.documentElement.classList.add(currentTheme);
+          currentThemeIndex = themeOrder.indexOf(currentTheme);
+        }
+      });
+
+      // Add classes to the HTML tag for each color theme
+      colours.forEach((colour) => {
+        const style = document.createElement('style');
+        style.textContent = `
+              html.${colour.name.toLowerCase()} {
+              background-color: ${colour.background};
+              color: ${colour.textColour};
+
+              .portable-text a {
+                color: #00000066;
+              }
+
+              header {
+                background-color: ${colour.background};
+              }
+
+              .theme-button {
+                border-color: ${colour.textColour};
+              }
+            }
+          `;
+        document.head.appendChild(style);
+      });
+    }
   }
 
-  window.localStorage.setItem('theme', theme);
-
-  const handleToggleClick = () => {
-    currentThemeIndex = (currentThemeIndex + 1) % themeOrder.length;
-    const nextTheme = themeOrder[currentThemeIndex];
-
-    const element = document.documentElement;
-    element.classList.remove(...themeOrder);
-    element.classList.add(nextTheme);
-
-    localStorage.setItem('theme', nextTheme);
-  };
-
-  document.getElementById('themeToggle').addEventListener('click', handleToggleClick);
-
-  // Runs on view transitions navigation
-  document.addEventListener('astro:after-swap', function () {
-    document.getElementById('themeToggle').addEventListener('click', handleToggleClick);
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme) {
-      document.documentElement.classList.add(currentTheme);
-      currentThemeIndex = themeOrder.indexOf(currentTheme);
-    }
-  });
+  customElements.define('button-container', ButtonContainer);
 </script>
