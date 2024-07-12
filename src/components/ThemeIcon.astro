@@ -4,11 +4,11 @@ import { getColourTheme } from '../utils/sanity';
 const colours = await getColourTheme();
 ---
 
-<button-container class="h-6">
+<button-container class="h-6 flex items-center">
   <button
     data-colours={JSON.stringify(colours)}
     id="themeToggle"
-    class="h-4 w-4 md:h-6 md:w-6 rounded-full border-2 theme-button"></button>
+    class="h-4 w-4 md:h-6 md:w-6 rounded-full border md:border-2 theme-button"></button>
 </button-container>
 
 <style>
@@ -104,10 +104,6 @@ const colours = await getColourTheme();
 
               .portable-text a {
                 color: #00000066;
-              }
-
-              header {
-                background-color: ${colour.background};
               }
 
               .theme-button {

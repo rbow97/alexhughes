@@ -32,12 +32,15 @@ const currentPath = Astro.url.pathname;
     <ViewTransitions />
   </head>
   <body>
-    <header class="flex justify-between md:px-[30px] sticky top-0 px-4 py-4 md:py-[30px]">
+    <header
+      class="flex justify-between md:px-[30px] sticky top-0 px-4 py-5 md:py-10 bg-transparent items-center"
+    >
       <a
         href="/"
         class={currentPath.includes('info')
-          ? 'name text-lg md:text-[34px] leading-[20px] md:leading-[40px]'
-          : 'text-lg md:text-[34px] leading-[20px] md:leading-[40px]'}>Alex Hughes</a
+          ? 'name text-lg md:text-[34px] leading-[20px] md:leading-[40px] h-fit'
+          : 'text-lg md:text-[34px] leading-[20px] md:leading-[40px] h-fit'}
+        >Alex Hughes</a
       >
       <div class="flex gap-4 md:gap-7 items-center">
         <ThemeIcon />
@@ -68,10 +71,6 @@ const currentPath = Astro.url.pathname;
         .portable-text a {
           color: #00000066;
         }
-
-        header {
-          background-color: #ffffff;
-        }
       }
 
       html.dark {
@@ -80,10 +79,6 @@ const currentPath = Astro.url.pathname;
 
         .portable-text a {
           color: #ffffff80;
-        }
-
-        header {
-          background-color: #000000;
         }
       }
 

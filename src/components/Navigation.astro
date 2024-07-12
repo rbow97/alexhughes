@@ -6,13 +6,13 @@ const currentPath = Astro.url.pathname;
   <ul class="flex gap-2 text-lg md:text-[34px]">
     <li>
       <a
-        class={currentPath.includes('/index') ? 'line-through' : 'hover:underline'}
+        class={currentPath.includes('/index') ? 'line-through' : 'hover:line-through'}
         href="/index">Index</a
       ><span>,</span>
     </li>
     <li>
       <a
-        class={currentPath.includes('/info') ? 'line-through' : 'hover:underline'}
+        class={currentPath.includes('/info') ? 'line-through' : 'hover:line-through'}
         href="/info">Info</a
       >
     </li>
