@@ -25,7 +25,12 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   // Hybrid+adapter is required to support embedded Sanity Studio
   output: 'hybrid',
-  adapter: vercel(),
+  adapter: vercel({
+    isr: {
+      // caches all pages on first request and saves for 1 day
+      expiration: 60 * 60 * 24,
+    },
+  }),
   integrations: [
     sanity({
       projectId,
