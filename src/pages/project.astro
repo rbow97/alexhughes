@@ -7,6 +7,8 @@ import EmptyLayout from '../layouts/EmptyLayout.astro';
 import { getAlbums } from '../utils/sanity';
 import { sortedPhotos } from '../utils/sortedPhotos';
 
+export const prerender = false;
+
 const albums = await getAlbums();
 
 const flattenedSortedPhotos = sortedPhotos(albums);

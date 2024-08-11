@@ -4,6 +4,8 @@ import Layout from '../layouts/Layout.astro';
 import { returnAlbumWithCoverPhoto } from '../utils/findCoverPhotos';
 import { getAlbums } from '../utils/sanity';
 
+export const prerender = false;
+
 const albums = await getAlbums();
 const albumWithCoverPhoto = returnAlbumWithCoverPhoto(albums);
 ---

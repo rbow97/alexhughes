@@ -4,6 +4,8 @@ import Layout from '../layouts/Layout.astro';
 import { getAlbums } from '../utils/sanity';
 import { sortedPhotos } from '../utils/sortedPhotos';
 
+export const prerender = false;
+
 export function getStaticPaths() {
   return [{ params: { path: 'index' } }];
 }

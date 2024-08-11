@@ -3,6 +3,8 @@ import { PortableText } from 'astro-portabletext';
 import Layout from '../layouts/Layout.astro';
 import { getPagesBySlugQuery } from '../utils/sanity';
 
+export const prerender = false;
+
 const page = await getPagesBySlugQuery('info');
 ---
 
