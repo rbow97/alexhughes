@@ -18,15 +18,15 @@ const { album, className } = Astro.props;
   )}
 >
   <album-photo data-album-size={album.photos.length}>
-    <a id="container" href="/project" class="group relative max-h-[700px] cursor-pointer">
-      <div>
+    <a id="container" href="/project">
+      <div class="group relative max-h-[700px] cursor-pointer">
         <img
           src={album.coverPhoto
             ? urlFor(album.coverPhoto.image).url()
             : urlFor(album.photos[0].image).url()}
           alt={album.coverPhoto ? album.coverPhoto._key : album.photos[0]._key}
           id="currentPhoto"
-          class="max-h-[350px] object-contain md:max-h-[unset] md:group-hover:opacity-0"
+          class="object-contain md:group-hover:opacity-0 max-h-[350px] md:max-h-[700px]"
           data-photo-urls={JSON.stringify(
             album.photos.map((photo) => urlFor(photo.image).url()),
           )}
